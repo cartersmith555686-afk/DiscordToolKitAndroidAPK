@@ -3,23 +3,36 @@ on: [push, workflow_dispatch]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Install System Dependencies
+      - name: Setup Java Runtime environment
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Install System Packaging Tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libssl-dev cmake
+          sudo apt-get install -y git zip unzip python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libssl-dev cmake libffi-dev
 
-      - name: Setup Buildozer
+      - name: Install Buildozer Requirements
         run: |
           pip3 install --upgrade pip setuptools wheel
-          pip3 install buildozer
+          pip3 install Cython==0.29.37 buildozer
 
-      - name: Compile APK Package
-        run: buildozer android debug
+      - name: Bypass Android SDK Licensing Check
+        run: |
+          mkdir -p ~/.android
+          touch ~/.android/repositories.cfg
+          
+      - name: Compile Standalone APK Bundle
+        run: |
+          export BUILDOZER_WARN_ON_ROOT=1
+          buildozer android debug
 
       - name: Upload Finished APK Artifact
         uses: actions/upload-artifact@v4
