@@ -4,10 +4,10 @@
 title = Randoms Discord ToolKit
 
 # (string) Package name
-package.name = deltamatrix
+package.name = RandomsToolkit
 
 # (string) Package domain (needed for android packaging)
-package.domain = org.deltacore
+package.domain = org.randomcore
 
 # (string) Source code directory
 source.dir = .
