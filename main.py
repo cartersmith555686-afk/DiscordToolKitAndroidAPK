@@ -49,7 +49,7 @@ class DeltaMatrixEngine(BoxLayout):
         self.spacing = 8
         
         header = Label(
-            text="[b]DELTA WEBHOOK MATRIX v2.0[/b]\n[size=11][color=00FF66]STATUS: AUTHENTICATED[/color][/size]",
+            text="[b]Randoms Toolkit v2.0[/b]\n[size=11][color=00FF66]STATUS: AUTHENTICATED[/color][/size]",
             markup=True,
             size_hint_y=None,
             height=55,
@@ -155,7 +155,7 @@ class DeltaMatrixEngine(BoxLayout):
         url, data = self.validate_inputs()
         if not url or not data: return
         def run():
-            embed = {"title": "Delta Engine Alert", "description": data, "color": 10309852}
+            embed = {"title": Toolkit Engine Alert", "description": data, "color": 10309852}
             try:
                 r = requests.post(url, json={"embeds": [embed]})
                 self.log(f"Quick Embed Dispatched: {r.status_code}")
@@ -167,8 +167,8 @@ class DeltaMatrixEngine(BoxLayout):
         if not url or not data: return
         def run():
             payload = {
-                "content": "Delta Broadcast Transmission:",
-                "embeds": [{"title": "Matrix Metadata", "description": data, "color": 65280}]
+                "content": Toolkit Broadcast Transmission:",
+                "embeds": [{"title": RandomTK Metadata", "description": data, "color": 65280}]
             }
             try:
                 r = requests.post(url, json=payload)
@@ -364,7 +364,7 @@ class DeltaMatrixEngine(BoxLayout):
         threading.Thread(target=run).start()
 
     def feat_links_hub(self, instance):
-        self.log("Delta Hub Links routing stable.")
+        self.log("Random Hub Links routing stable.")
 
     def feat_quit(self, instance):
         sys.exit(0)
@@ -375,4 +375,4 @@ class DeltaMatrixContainerApp(App):
         return DeltaMatrixEngine()
 
 if __name__ == '__main__':
-    DeltaMatrixContainerApp().run()
+    RandomsTookitContainerApp().run()
