@@ -1,0 +1,28 @@
+name: Build Android APK
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libssl-dev cmake
+
+      - name: Setup Buildozer
+        run: |
+          pip3 install --upgrade pip setuptools wheel
+          pip3 install buildozer
+
+      - name: Compile APK Package
+        run: buildozer android debug
+
+      - name: Upload Finished APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: DeltaMatrixTool
+          path: bin/*.apk
