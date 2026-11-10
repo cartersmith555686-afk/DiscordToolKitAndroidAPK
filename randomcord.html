@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#08060d">
+<title>RANDOMCORD</title>
+<style>
+:root{--bg:#08060d;--card:#120d1f;--card2:#1a1230;--line:#2c1f4d;--pur:#8b5cf6;--pur2:#6d28d9;--grn:#22ff88;--txt:#e9e4f7;--mut:#8f84ad;--red:#ff4d6d;--amb:#ffc857}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--txt);font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+body{display:flex;flex-direction:column;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#140d26,#08060d)}
+.logo{font-weight:900;letter-spacing:3px;font-size:20px;background:linear-gradient(90deg,var(--pur),var(--grn));-webkit-background-clip:text;background-clip:text;color:transparent}
+.logo small{display:block;font-size:9px;letter-spacing:2px;color:var(--mut);-webkit-text-fill-color:var(--mut)}
+#status{font-size:10px;letter-spacing:1px;padding:4px 8px;border:1px solid var(--line);border-radius:20px;color:var(--mut)}
+#status.ok{color:var(--grn);border-color:#14663a;box-shadow:0 0 8px #22ff8833}
+#status.bad{color:var(--amb)}
+main{flex:1;overflow-y:auto;padding:12px 14px 8px}
+label{display:block;font-size:11px;letter-spacing:1px;color:var(--mut);margin:12px 0 4px;text-transform:uppercase}
+input,textarea,select{width:100%;background:#0d0818;color:var(--grn);border:1px solid var(--line);border-radius:10px;padding:11px 12px;font:16px ui-monospace,Menlo,Consolas,monospace;outline:none}
+input:focus,textarea:focus,select:focus{border-color:var(--pur);box-shadow:0 0 0 2px #8b5cf633}
+textarea{min-height:90px;resize:vertical}
+input[type=checkbox]{width:auto;accent-color:var(--pur)}
+input[type=file]{color:var(--txt)}
+.chk{display:flex;align-items:center;gap:8px;margin:10px 0;color:var(--txt);font-size:14px;text-transform:none;letter-spacing:0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.tile{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:12px;color:var(--txt);padding:13px 6px;font:600 14px ui-monospace,Menlo,monospace;text-align:center;cursor:pointer}
+.tile b{color:var(--pur);margin-right:6px}
+.tile:active{transform:scale(.97);border-color:var(--pur)}
+.tile.quit{grid-column:1/2;border-color:#5a1d2e}
+.tile.quit b{color:var(--red)}
+.btn{background:var(--pur2);border:0;color:#fff;border-radius:10px;padding:13px 16px;font:700 14px ui-monospace,Menlo,monospace;cursor:pointer;margin:10px 8px 0 0}
+.btn:active{background:var(--pur)}
+.btn.g{background:#0f7a43}.btn.r{background:#9b1c3a}.btn.o{background:transparent;border:1px solid var(--line);color:var(--txt)}
+h2{margin:6px 0 2px;font-size:16px;color:var(--grn)}
+.hint{font-size:12px;color:var(--mut);line-height:1.5;margin:4px 0}
+.back{background:none;border:0;color:var(--pur);font:700 14px ui-monospace,monospace;padding:6px 0;cursor:pointer}
+#log{border-top:1px solid var(--line);background:#050309;height:26vh;min-height:110px;overflow-y:auto;padding:8px 14px;font-size:12px;line-height:1.5}
+#log div{margin:2px 0;word-break:break-word}
+.ok{color:var(--grn)}.err{color:var(--red)}.inf{color:var(--mut)}.wrn{color:var(--amb)}
+.row{display:flex;gap:8px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 10px;margin:6px 0;font-size:13px;word-break:break-all}
+.row span{flex:1}
+.row button{background:none;border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:6px 10px;font:12px monospace}
+.sel{border-color:var(--grn)}
+#lock{position:fixed;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;flex-direction:column;z-index:9;text-align:center}
+#lock.on{display:flex}
+#lock .logo{font-size:30px}
+pre{white-space:pre-wrap;word-break:break-word;background:#0d0818;border:1px solid var(--line);border-radius:10px;padding:10px;color:var(--txt);font-size:12px}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">RANDOMCORD<small>WEBHOOK CONTROL CENTER</small></div>
+  <div id="status">NO TARGET</div>
+</header>
+
+<main id="main">
+  <div id="common">
+    <label>Target Discord Webhook URL</label>
+    <input id="url" type="url" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://discord.com/api/webhooks/ID/TOKEN">
+    <label>Input String — Message / Content / Variable Data</label>
+    <textarea id="msg" placeholder="Type your message here. Used by Send, Embed, Edit, Link Button and more."></textarea>
+  </div>
+  <div id="grid" class="grid"></div>
+  <div id="panel" style="display:none"></div>
+</main>
+
+<div id="log"><div class="ok">[System Ready] RANDOMCORD dashboard loaded.</div></div>
+
+<div id="lock">
+  <div class="logo">RANDOMCORD<small>SESSION CLOSED</small></div>
+  <button class="btn g" style="margin-top:28px" id="unlock">RESTART SYSTEM</button>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const KEY='randomcord_v1';
+let S={hooks:[],current:'',templates:[],links:[],queue:[],lastId:'',
+  settings:{username:'',avatar:'',users:false,roles:false,everyone:false,thread_id:'',thread_name:''}};
+try{const d=JSON.parse(localStorage.getItem(KEY)||'null');if(d){S={...S,...d,settings:{...S.settings,...(d.settings||{})}}}}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+
+function log(m,t='inf'){const d=document.createElement('div');d.className=t;
+  d.textContent=new Date().toLocaleTimeString([], {hour12:false})+'  '+m;
+  const l=$('#log');l.appendChild(d);l.scrollTop=l.scrollHeight;
+  while(l.children.length>200)l.removeChild(l.firstChild)}
+
+const HOOK_RE=/^https:\/\/((canary|ptb)\.)?(discord|discordapp)\.com\/api(\/v\d+)?\/webhooks\/\d+\/[\w-]+$/;
+const clean=u=>(u||'').trim().split('?')[0].replace(/\/+$/,'');
+function url(){const u=clean($('#url').value);return u}
+function needUrl(){const u=url();if(!HOOK_RE.test(u)){log('Invalid or missing webhook URL.','err');return null}return u}
+function refreshStatus(){const u=url(),s=$('#status');
+  if(!u){s.textContent='NO TARGET';s.className=''}
+  else if(HOOK_RE.test(u)){s.textContent='STATUS: AUTHENTICATED';s.className='ok'}
+  else{s.textContent='BAD URL';s.className='bad'}
+  S.current=$('#url').value.trim();save()}
+const msgText=()=>$('#msg').value;
+
+function mentions(){const s=S.settings,p=[];if(s.users)p.push('users');if(s.roles)p.push('roles');if(s.everyone)p.push('everyone');return{parse:p}}
+function base(extra={}){const s=S.settings,p={allowed_mentions:mentions()};
+  if(s.username)p.username=s.username;if(s.avatar)p.avatar_url=s.avatar;
+  if(s.thread_name&&!s.thread_id)p.thread_name=s.thread_name;
+  return{...p,...extra}}
+const intColor=h=>{h=(h||'').replace('#','');return /^[0-9a-f]{6}$/i.test(h)?parseInt(h,16):undefined};
+
+async function api(u,{method='POST',payload,files,query={},path=''}={}){
+  const q=new URLSearchParams(query);
+  if(method!=='DELETE'&&!('wait' in query))q.set('wait','true');
+  if(S.settings.thread_id&&path.indexOf('/messages')===0||(S.settings.thread_id&&method==='POST'))q.set('thread_id',S.settings.thread_id);
+  const full=u+path+(q.toString()?'?'+q.toString():'');
+  for(let a=0;a<4;a++){
+    let opt={method};
+    if(method!=='DELETE'&&method!=='GET'){
+      if(files&&files.length){const fd=new FormData();
+        const pl={...payload,attachments:files.map((f,i)=>({id:i,filename:f.name}))};
+        fd.append('payload_json',JSON.stringify(pl));
+        files.forEach((f,i)=>fd.append('files['+i+']',f.blob,f.name));opt.body=fd}
+      else{opt.headers={'Content-Type':'application/json'};opt.body=JSON.stringify(payload)}}
+    let r;try{r=await fetch(full,opt)}catch(e){log('Network error: '+e.message,'err');return{ok:false}}
+    if(r.status===429){let j={};try{j=await r.json()}catch(e){}
+      const w=Math.ceil(((j.retry_after||2))*1000);log('Rate limited. Waiting '+(w/1000).toFixed(1)+'s…','wrn');await sleep(w+250);continue}
+    let data=null;const txt=await r.text();try{data=txt?JSON.parse(txt):null}catch(e){data=txt}
+    if(!r.ok){log('HTTP '+r.status+': '+(data&&data.message?data.message:txt.slice(0,160)),'err');return{ok:false,status:r.status,data}}
+    if(data&&data.id&&method==='POST'&&path===''){S.lastId=data.id;save()}
+    return{ok:true,status:r.status,data}}
+  log('Gave up after repeated rate limits.','err');return{ok:false}}
+
+const send=(payload,opts)=>{const u=needUrl();if(!u)return Promise.resolve({ok:false});return api(u,{payload,...opts})};
+async function sendLog(payload,opts,label='Message sent'){const r=await send(payload,opts);if(r.ok)log(label+(r.data&&r.data.id?' (id '+r.data.id+')':'.'),'ok');return r}
+
+/* ---------- helpers for forms ---------- */
+const F=(label,id,ph='',type='text',val='')=>`<label>${label}</label><input id="${id}" type="${type}" placeholder="${esc(ph)}" value="${esc(val)}" autocomplete="off" autocapitalize="off">`;
+const T=(label,id,ph='',val='',h=90)=>`<label>${label}</label><textarea id="${id}" placeholder="${esc(ph)}" style="min-height:${h}px">${esc(val)}</textarea>`;
+const C=(label,id,on=false)=>`<label class="chk"><input type="checkbox" id="${id}" ${on?'checked':''}>${label}</label>`;
+const B=(txt,id,cls='')=>`<button class="btn ${cls}" id="${id}">${txt}</button>`;
+const v=id=>$('#'+id).value.trim();
+const on=(id,fn)=>{const e=$('#'+id);if(e)e.onclick=fn};
+
+function readEmbed(p){const e={};
+  if(v(p+'title'))e.title=v(p+'title');if(v(p+'desc'))e.description=v(p+'desc');
+  const c=intColor(v(p+'color'));if(c!==undefined)e.color=c;
+  if(v(p+'footer'))e.footer={text:v(p+'footer')};
+  if(v(p+'image'))e.image={url:v(p+'image')};if(v(p+'thumb'))e.thumbnail={url:v(p+'thumb')};
+  if(v(p+'author'))e.author={name:v(p+'author')};
+  if(v(p+'eurl'))e.url=v(p+'eurl');
+  if($('#'+p+'ts')&&$('#'+p+'ts').checked)e.timestamp=new Date().toISOString();
+  const fl=$('#'+p+'fields');if(fl&&fl.value.trim()){e.fields=fl.value.trim().split('\n').slice(0,25).map(l=>{const[n,val,inl]=l.split('|');return{name:(n||'-').trim(),value:(val||'-').trim(),inline:(inl||'').trim()==='1'}})}
+  return e}
+const embedForm=p=>F('Embed title',p+'title','Title')+T('Embed description',p+'desc','Description (blank = use input string)','',70)+
+  F('Color hex',p+'color','#8b5cf6')+F('Footer',p+'footer')+F('Author',p+'author')+F('Title link URL',p+'eurl','https://')+
+  F('Image URL',p+'image','https://')+F('Thumbnail URL',p+'thumb','https://')+
+  T('Fields (name|value|1 for inline, one per line)',p+'fields','Rank|Gold|1',' ',60)+C('Add timestamp',p+'ts');
+
+function fileList(id){const f=$('#'+id).files;return[...f].map(x=>({blob:x,name:x.name}))}
+
+/* ---------- panels ---------- */
+const P={};
+P['01']={n:'Send Message',h:()=>`<p class="hint">Sends the input string above as a normal message.</p>${C('Text-to-speech','tts')}${B('SEND','go','g')}`,
+  i(){on('go',()=>sendLog(base({content:msgText(),tts:$('#tts').checked})))}};
+P['02']={n:'Quick Embed',h:()=>`<p class="hint">Input string becomes the embed description.</p>${F('Title','t')}${F('Color hex','c','#8b5cf6')}${B('SEND EMBED','go','g')}`,
+  i(){on('go',()=>{const e={description:msgText()};if(v('t'))e.title=v('t');const c=intColor(v('c'));if(c!==undefined)e.color=c;sendLog(base({embeds:[e]}),0,'Embed sent')})}};
+P['03']={n:'Message + Embed',h:()=>`<p class="hint">Input string is the message text; the form builds the embed.</p>${embedForm('e_')}${B('SEND','go','g')}`,
+  i(){on('go',()=>{const e=readEmbed('e_');if(!e.description&&!e.title&&!e.fields&&!e.image)e.description=msgText();sendLog(base({content:msgText(),embeds:[e]}))})}};
+P['04']={n:'Send File',h:()=>`<p class="hint">Attach up to 10 files (max 25 MB total on most servers). Input string is the caption.</p><label>Files</label><input type="file" id="f" multiple>${B('UPLOAD','go','g')}`,
+  i(){on('go',()=>{const fl=fileList('f');if(!fl.length)return log('Pick a file first.','err');sendLog(base({content:msgText()}),{files:fl.slice(0,10)},'File sent')})}};
+P['05']={n:'Send Spoiler File',h:()=>`<p class="hint">Same as Send File, but each file is marked as a spoiler.</p><label>Files</label><input type="file" id="f" multiple>${B('UPLOAD AS SPOILER','go','g')}`,
+  i(){on('go',()=>{const fl=fileList('f').map(x=>({...x,name:'SPOILER_'+x.name.replace(/^SPOILER_/,'')}));if(!fl.length)return log('Pick a file first.','err');sendLog(base({content:msgText()}),{files:fl.slice(0,10)},'Spoiler file sent')})}};
+P['06']={n:'Threads Config',h:()=>`<p class="hint">Post into an existing thread by ID, or create a new forum post by name. Applies to all sends. Leave blank to post normally.</p>${F('Existing thread ID','th','',  'text',S.settings.thread_id)}${F('New forum post title','tn','','text',S.settings.thread_name)}${B('SAVE','go','g')}${B('CLEAR','cl','o')}`,
+  i(){on('go',()=>{S.settings.thread_id=v('th');S.settings.thread_name=v('tn');save();log('Thread settings saved.','ok')});on('cl',()=>{S.settings.thread_id=S.settings.thread_name='';save();$('#th').value=$('#tn').value='';log('Thread settings cleared.','ok')})}};
+P['07']={n:'Edit / Delete',h:()=>`<p class="hint">Works on messages sent by this webhook. Edit uses the input string as the new text.</p>${F('Message ID','mid','','text',S.lastId)}${B('EDIT','ed','g')}${B('DELETE','del','r')}`,
+  i(){on('ed',async()=>{const id=v('mid');if(!id)return log('Need a message ID.','err');const r=await send({content:msgText()},{method:'PATCH',path:'/messages/'+id});if(r.ok)log('Message edited.','ok')});
+    on('del',async()=>{const id=v('mid');if(!id)return log('Need a message ID.','err');if(!confirm('Delete message '+id+'?'))return;const r=await send(null,{method:'DELETE',path:'/messages/'+id});if(r.ok)log('Message deleted.','ok')})}};
+let stopFlag=false;
+P['08']={n:'Bulk Send',h:()=>`<p class="hint">One message per line, sent in order. Minimum delay 1 second to respect Discord rate limits.</p>${T('Messages (one per line)','lines','',' ',140)}${F('Delay between sends (ms)','dl','','number','1500')}${B('START','go','g')}${B('STOP','st','r')}`,
+  i(){on('st',()=>{stopFlag=true});on('go',async()=>{const ls=$('#lines').value.split('\n').map(s=>s.trim()).filter(Boolean).slice(0,100);if(!ls.length)return log('No lines.','err');
+    const d=Math.max(1000,+v('dl')||1500);stopFlag=false;log('Bulk send: '+ls.length+' messages…');let n=0;
+    for(const l of ls){if(stopFlag){log('Stopped.','wrn');break}const r=await send(base({content:l}));if(!r.ok)break;n++;log('Sent '+n+'/'+ls.length,'ok');await sleep(d)}log('Bulk done: '+n+' sent.','ok')})}};
+P['09']={n:'Scheduled Send',h:()=>`<p class="hint">Sends the input string at the chosen time. <b>RANDOMCORD must stay open</b> — missed items fire when you next open it.</p>${F('Send at','at','','datetime-local')}${B('SCHEDULE','go','g')}<div id="ql"></div>`,
+  i(){const draw=()=>{$('#ql').innerHTML=S.queue.map(q=>`<div class="row"><span>${new Date(q.at).toLocaleString()}<br>${esc((q.payload.content||'[embed]').slice(0,60))}</span><button data-id="${q.id}">Cancel</button></div>`).join('')||'<p class="hint">Nothing scheduled.</p>';
+      $('#ql').querySelectorAll('button').forEach(b=>b.onclick=()=>{S.queue=S.queue.filter(x=>x.id!=b.dataset.id);save();draw()})};
+    on('go',()=>{const u=needUrl();if(!u)return;const t=new Date($('#at').value).getTime();if(!t)return log('Pick a date/time.','err');
+      S.queue.push({id:Date.now(),at:t,url:u,payload:base({content:msgText()})});save();log('Scheduled for '+new Date(t).toLocaleString(),'ok');draw()});draw()}};
+P['10']={n:'Allowed Mentions',h:()=>`<p class="hint">Controls what pings are allowed. All off = nobody gets pinged.</p>${C('Allow user pings','mu',S.settings.users)}${C('Allow role pings','mr',S.settings.roles)}${C('Allow @everyone / @here','me',S.settings.everyone)}${B('SAVE','go','g')}`,
+  i(){on('go',()=>{S.settings.users=$('#mu').checked;S.settings.roles=$('#mr').checked;S.settings.everyone=$('#me').checked;save();log('Mention rules saved.','ok')})}};
+P['11']={n:'Username / Avatar',h:()=>`<p class="hint">Override the webhook's display name and picture for all sends.</p>${F('Username','un','','text',S.settings.username)}${F('Avatar image URL','av','https://','url',S.settings.avatar)}${B('SAVE','go','g')}${B('RESET','rs','o')}`,
+  i(){on('go',()=>{S.settings.username=v('un');S.settings.avatar=v('av');save();log('Identity saved.','ok')});on('rs',()=>{S.settings.username=S.settings.avatar='';save();$('#un').value=$('#av').value='';log('Identity reset.','ok')})}};
+P['12']={n:'Templates',h:()=>`<p class="hint">Save the current input string as a reusable template.</p>${F('Template name','tn')}${B('SAVE CURRENT','go','g')}<div id="tl"></div>`,
+  i(){const draw=()=>{$('#tl').innerHTML=S.templates.map((t,i)=>`<div class="row"><span><b>${esc(t.name)}</b><br>${esc(t.text.slice(0,70))}</span><button data-l="${i}">Load</button><button data-d="${i}">X</button></div>`).join('')||'<p class="hint">No templates yet.</p>';
+      $('#tl').querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>{$('#msg').value=S.templates[b.dataset.l].text;log('Template loaded into input.','ok')});
+      $('#tl').querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{S.templates.splice(b.dataset.d,1);save();draw()})};
+    on('go',()=>{if(!v('tn')||!msgText())return log('Need a name and text.','err');S.templates.push({name:v('tn'),text:msgText()});save();draw();log('Template saved.','ok')});draw()}};
+P['13']={n:'Rotate Across',h:()=>`<p class="hint">Distributes your lines round-robin across ALL saved webhooks (see 17). Message 1 → hook 1, message 2 → hook 2, and so on.</p>${T('Messages (one per line)','lines','',' ',120)}${F('Delay (ms)','dl','','number','1500')}${B('START','go','g')}${B('STOP','st','r')}`,
+  i(){on('st',()=>{stopFlag=true});on('go',async()=>{if(!S.hooks.length)return log('Save webhooks in 17 first.','err');
+    const ls=$('#lines').value.split('\n').map(s=>s.trim()).filter(Boolean).slice(0,100);if(!ls.length)return log('No lines.','err');
+    const d=Math.max(1000,+v('dl')||1500);stopFlag=false;let n=0;
+    for(const l of ls){if(stopFlag){log('Stopped.','wrn');break}const h=S.hooks[n%S.hooks.length];
+      const r=await api(h.url,{payload:base({content:l})});if(r.ok)log('→ '+h.name+': sent','ok');n++;await sleep(d)}log('Rotation finished.','ok')})}};
+P['14']={n:'Raw JSON',h:()=>`<p class="hint">Full control. Paste any valid Discord webhook payload.</p>${T('Payload JSON','js','{"content":"hello","embeds":[]}','',200)}${B('SEND','go','g')}${B('PRETTIFY','pp','o')}`,
+  i(){on('pp',()=>{try{$('#js').value=JSON.stringify(JSON.parse($('#js').value),null,2)}catch(e){log('Invalid JSON: '+e.message,'err')}});
+    on('go',()=>{let p;try{p=JSON.parse($('#js').value)}catch(e){return log('Invalid JSON: '+e.message,'err')}sendLog(p,0,'Raw payload sent')})}};
+P['15']={n:'Test Ping',h:()=>`<p class="hint">Checks that the webhook is alive and measures latency.</p>${C('Also post a "RANDOMCORD ping" message','pm')}${B('TEST','go','g')}`,
+  i(){on('go',async()=>{const u=needUrl();if(!u)return;const t=performance.now();
+    try{const r=await fetch(u);const ms=Math.round(performance.now()-t);
+      if(r.ok){log('Webhook ALIVE — '+ms+' ms','ok');if($('#pm').checked)sendLog(base({content:'🟣 RANDOMCORD ping ('+ms+' ms)'}))}
+      else log('Webhook responded '+r.status+' — invalid or deleted.','err')}catch(e){log('Unreachable: '+e.message,'err')}})}};
+P['16']={n:'Webhook Info',h:()=>`${B('FETCH INFO','go','g')}<div id="out"></div>`,
+  i(){on('go',async()=>{const u=needUrl();if(!u)return;const r=await api(u,{method:'GET'});if(!r.ok)return;const d=r.data;
+    $('#out').innerHTML='<pre>'+esc(`Name:      ${d.name}\nID:        ${d.id}\nChannel:   ${d.channel_id}\nServer:    ${d.guild_id||'-'}\nType:      ${d.type}\nApp-owned: ${d.application_id?'yes':'no'}`)+'</pre>'+(d.avatar?`<img src="https://cdn.discordapp.com/avatars/${d.id}/${d.avatar}.png?size=96" style="border-radius:50%;margin-top:8px">`:'');log('Info loaded.','ok')})}};
+P['17']={n:'Manage Webhooks',h:()=>`<p class="hint">Save webhooks for quick switching and rotation. Stored only on this device.</p>${F('Name','hn')}${B('SAVE CURRENT URL','go','g')}<div id="hl"></div>`,
+  i(){const draw=()=>{$('#hl').innerHTML=S.hooks.map((h,i)=>`<div class="row ${h.url===url()?'sel':''}"><span><b>${esc(h.name)}</b><br>…${esc(h.url.slice(-14))}</span><button data-u="${i}">Use</button><button data-d="${i}">X</button></div>`).join('')||'<p class="hint">None saved.</p>';
+      $('#hl').querySelectorAll('[data-u]').forEach(b=>b.onclick=()=>{$('#url').value=S.hooks[b.dataset.u].url;refreshStatus();draw();log('Switched to '+S.hooks[b.dataset.u].name,'ok')});
+      $('#hl').querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{S.hooks.splice(b.dataset.d,1);save();draw()})};
+    on('go',()=>{const u=needUrl();if(!u)return;if(!v('hn'))return log('Give it a name.','err');S.hooks.push({name:v('hn'),url:u});save();draw();log('Webhook saved.','ok')});draw()}};
+P['18']={n:'Import / Export',h:()=>`<p class="hint">Back up everything (webhooks, templates, settings). The export contains webhook tokens — keep it private.</p>${B('EXPORT','ex','g')}${B('COPY','cp','o')}${B('IMPORT','im','')}${T('Data','dt','','',200)}`,
+  i(){on('ex',()=>{$('#dt').value=JSON.stringify(S,null,2);log('Exported to text box.','ok')});
+    on('cp',async()=>{try{await navigator.clipboard.writeText($('#dt').value);log('Copied.','ok')}catch(e){log('Copy failed — select the text manually.','err')}});
+    on('im',()=>{try{const d=JSON.parse($('#dt').value);S={...S,...d,settings:{...S.settings,...(d.settings||{})}};save();log('Imported.','ok')}catch(e){log('Invalid data: '+e.message,'err')}})}};
+P['19']={n:'Link Button',h:()=>`<p class="hint">Adds a clickable link button under your message (input string).</p>${F('Button label','bl','Open site')}${F('Button URL','bu','https://','url')}${B('SEND','go','g')}`,
+  i(){on('go',()=>{if(!v('bl')||!/^https?:\/\//.test(v('bu')))return log('Need a label and an http(s) URL.','err');
+    sendLog(base({content:msgText()||'\u200b',components:[{type:1,components:[{type:2,style:5,label:v('bl').slice(0,80),url:v('bu')}]}]}),{query:{with_components:'true'}},'Message with button sent')})}};
+P['20']={n:'Links Hub',h:()=>`<p class="hint">One <b>label|url</b> per line. Posts a neat embed of links, optionally with buttons (first 5).</p>${T('Links','lk','Website|https://example.com','',140)}${C('Also add link buttons','lb',true)}${B('SAVE','sv','o')}${B('POST HUB','go','g')}`,
+  i(){$('#lk').value=S.links.join('\n');on('sv',()=>{S.links=$('#lk').value.split('\n').map(s=>s.trim()).filter(Boolean);save();log('Links saved.','ok')});
+    on('go',()=>{const ls=$('#lk').value.split('\n').map(s=>s.trim()).filter(Boolean).map(l=>{const[a,...b]=l.split('|');return{label:a.trim(),url:b.join('|').trim()}}).filter(x=>/^https?:\/\//.test(x.url));
+      if(!ls.length)return log('No valid links.','err');
+      const p=base({content:msgText(),embeds:[{title:'🔗 Links',description:ls.map(x=>`**[${x.label}](${x.url})**`).join('\n'),color:0x8b5cf6}]});
+      if($('#lb').checked)p.components=[{type:1,components:ls.slice(0,5).map(x=>({type:2,style:5,label:x.label.slice(0,80),url:x.url}))}];
+      sendLog(p,{query:{with_components:'true'}},'Links hub posted')})}};
+P['00']={n:'System Quit',h:()=>`<p class="hint">Closes the session and clears the on-screen webhook URL. Saved data stays on this device.</p>${B('QUIT','go','r')}`,
+  i(){on('go',()=>{$('#url').value='';refreshStatus();$('#lock').classList.add('on')})}};
+
+/* ---------- navigation ---------- */
+const order=['01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','00'];
+const grid=$('#grid');
+order.forEach(k=>{const b=document.createElement('button');b.className='tile'+(k==='00'?' quit':'');b.innerHTML=`<b>${k}.</b>${P[k].n}`;b.onclick=()=>openPanel(k);grid.appendChild(b)});
+function openPanel(k){grid.style.display='none';const el=$('#panel');el.style.display='block';
+  el.innerHTML=`<button class="back" id="bk">← BACK</button><h2>${k}. ${P[k].n}</h2>${P[k].h()}`;
+  $('#bk').onclick=closePanel;P[k].i();$('#main').scrollTop=0}
+function closePanel(){$('#panel').style.display='none';grid.style.display='grid'}
+
+$('#url').value=S.current||'';$('#url').addEventListener('input',refreshStatus);refreshStatus();
+$('#unlock').onclick=()=>{$('#lock').classList.remove('on');closePanel();log('[System Ready] Dashboard reloaded.','ok')};
+
+/* ---------- scheduler ---------- */
+setInterval(async()=>{const now=Date.now();const due=S.queue.filter(q=>q.at<=now);if(!due.length)return;
+  S.queue=S.queue.filter(q=>q.at>now);save();
+  for(const q of due){const r=await api(q.url,{payload:q.payload});log(r.ok?'Scheduled message delivered.':'Scheduled message failed.',r.ok?'ok':'err')}},1000);
+</script>
+</body>
+</html>
