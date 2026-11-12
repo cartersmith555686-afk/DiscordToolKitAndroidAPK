@@ -1,0 +1,40 @@
+{
+  "name": "RANDOMCORD",
+  "short_name": "RANDOMCORD",
+  "description": "Discord webhook control center",
+  "id": "./index.html",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#08060d",
+  "theme_color": "#08060d",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["utilities", "productivity"],
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ],
+  "shortcuts": [
+    {"name": "New message", "short_name": "Message", "url": "./index.html?open=01", "icons": [{"src": "icon-192.png", "sizes": "192x192", "type": "image/png"}]},
+    {"name": "Embed builder", "short_name": "Embeds", "url": "./index.html?open=03", "icons": [{"src": "icon-192.png", "sizes": "192x192", "type": "image/png"}]},
+    {"name": "Message history", "short_name": "History", "url": "./index.html?open=21", "icons": [{"src": "icon-192.png", "sizes": "192x192", "type": "image/png"}]},
+    {"name": "Plugin store", "short_name": "Plugins", "url": "./index.html?open=store", "icons": [{"src": "icon-192.png", "sizes": "192x192", "type": "image/png"}]},
+    {"name": "Embed gallery", "short_name": "Gallery", "url": "./index.html?open=24", "icons": [{"src": "icon-192.png", "sizes": "192x192", "type": "image/png"}]}
+  ],
+  "share_target": {
+    "action": "./share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {"name": "files", "accept": ["image/*", "video/*", "audio/*", "text/*", "application/pdf", "application/zip"]}
+      ]
+    }
+  }
+}

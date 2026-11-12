@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#08060d">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>RANDOMCORD</title>
+<style>
+:root{--bg:#08060d;--card:#120d1f;--card2:#1a1230;--line:#2c1f4d;--pur:#8b5cf6;--pur2:#6d28d9;--ring:#8b5cf633;--grn:#22ff88;--txt:#e9e4f7;--mut:#8f84ad;--red:#ff4d6d;--amb:#ffc857;--inp:#0d0818;--logbg:#050309}
+:root[data-theme=light]{--bg:#f6f3fc;--card:#ffffff;--card2:#efe9fb;--line:#d8cdf0;--grn:#0a7f45;--txt:#1d1633;--mut:#6b6288;--red:#c62847;--amb:#a86b00;--inp:#ffffff;--logbg:#fbf9ff}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--txt);font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+body{display:flex;flex-direction:column;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--card2),var(--bg))}
+.logo{font-weight:900;letter-spacing:3px;font-size:20px;background:linear-gradient(90deg,var(--pur),var(--grn));-webkit-background-clip:text;background-clip:text;color:transparent}
+.logo small{display:block;font-size:9px;letter-spacing:2px;color:var(--mut);-webkit-text-fill-color:var(--mut)}
+#status{font-size:10px;letter-spacing:1px;padding:4px 8px;border:1px solid var(--line);border-radius:20px;color:var(--mut)}
+#status.ok{color:var(--grn);border-color:#14663a;box-shadow:0 0 8px #22ff8833}
+#status.bad{color:var(--amb)}
+main{flex:1;overflow-y:auto;padding:12px 14px 8px}
+label{display:block;font-size:11px;letter-spacing:1px;color:var(--mut);margin:12px 0 4px;text-transform:uppercase}
+input,textarea,select{width:100%;background:var(--inp);color:var(--grn);border:1px solid var(--line);border-radius:10px;padding:11px 12px;font:16px ui-monospace,Menlo,Consolas,monospace;outline:none}
+input:focus,textarea:focus,select:focus{border-color:var(--pur);box-shadow:0 0 0 2px var(--ring)}
+textarea{min-height:90px;resize:vertical}
+input[type=checkbox]{width:auto;accent-color:var(--pur)}
+input[type=file]{color:var(--txt)}
+input[type=color]{padding:2px;height:44px;width:80px}
+.chk{display:flex;align-items:center;gap:8px;margin:10px 0;color:var(--txt);font-size:14px;text-transform:none;letter-spacing:0}
+.crow{display:flex;align-items:center;gap:14px}
+.cnt{font-size:11px;color:var(--mut);text-align:right;margin-top:3px}
+.cnt.over{color:var(--red);font-weight:700}
+.mrow{display:flex;justify-content:space-between;align-items:center}
+.lnkbtn{background:none;border:0;color:var(--pur);font:700 12px ui-monospace,monospace;padding:4px 0;cursor:pointer}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.tile{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:12px;color:var(--txt);padding:13px 6px;font:600 14px ui-monospace,Menlo,monospace;text-align:center;cursor:pointer}
+.tile b{color:var(--pur);margin-right:6px}
+.tile:active{transform:scale(.97);border-color:var(--pur)}
+.tile.quit{border-color:#5a1d2e}
+.tile.quit b{color:var(--red)}
+.btn{background:var(--pur2);border:0;color:#fff;border-radius:10px;padding:13px 16px;font:700 14px ui-monospace,Menlo,monospace;cursor:pointer;margin:10px 8px 0 0}
+.btn:active{background:var(--pur)}
+.btn.g{background:#0f7a43}.btn.r{background:#9b1c3a}.btn.o{background:transparent;border:1px solid var(--line);color:var(--txt)}
+.btn.on{outline:2px solid var(--grn)}
+h2{margin:6px 0 2px;font-size:16px;color:var(--grn)}
+.hint{font-size:12px;color:var(--mut);line-height:1.5;margin:4px 0}
+.back{background:none;border:0;color:var(--pur);font:700 14px ui-monospace,monospace;padding:6px 0;cursor:pointer}
+#log{border-top:1px solid var(--line);background:var(--logbg);height:26vh;min-height:110px;overflow-y:auto;padding:8px 14px;font-size:12px;line-height:1.5}
+#log div{margin:2px 0;word-break:break-word}
+.ok{color:var(--grn)}.err{color:var(--red)}.inf{color:var(--mut)}.wrn{color:var(--amb)}
+.row{display:flex;gap:8px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 10px;margin:6px 0;font-size:13px;word-break:break-word}
+.row.col{flex-direction:column;align-items:stretch}
+.row span{flex:1;min-width:0}
+.row button{background:none;border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:6px 10px;font:12px monospace}
+.bt{display:flex;gap:6px;flex:none;flex-wrap:wrap}
+.sel{border-color:var(--grn)}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px;background:var(--mut)}
+.dot.g{background:#22c55e}.dot.r{background:#ef4444}.dot.a{background:#f59e0b}
+#lock{position:fixed;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;flex-direction:column;z-index:9;text-align:center}
+#lock.on{display:flex}
+#lock .logo{font-size:30px}
+#toast{position:fixed;left:14px;right:14px;bottom:calc(max(26vh,110px) + 14px);display:none;align-items:center;justify-content:space-between;gap:10px;background:var(--card2);border:1px solid var(--pur);border-radius:10px;padding:10px 12px;font-size:13px;z-index:8}
+#toast.on{display:flex}
+pre{white-space:pre-wrap;word-break:break-word;background:var(--inp);border:1px solid var(--line);border-radius:10px;padding:10px;color:var(--txt);font-size:12px}
+.tb{display:flex;gap:6px;overflow-x:auto;padding:6px 0 2px}
+.tb button{flex:none;background:var(--card);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:7px 11px;font:700 13px ui-monospace,monospace}
+.tb button:active{border-color:var(--pur)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0;padding:8px;border:1px solid var(--line);border-radius:10px}
+.frow .ln{grid-column:1/3;display:flex;justify-content:space-between;align-items:center}
+.frow .ln .chk{margin:0}
+.frow .x{background:none;border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:6px 10px;font:12px monospace}
+.etabs{display:flex;flex-wrap:wrap;margin-top:8px}
+.th{width:44px;height:44px;object-fit:cover;border-radius:8px;flex:none}
+.th.ic{display:flex;align-items:center;justify-content:center;background:var(--card2);font-size:10px;color:var(--mut)}
+.pbar{height:8px;background:var(--inp);border:1px solid var(--line);border-radius:6px;margin-top:10px;overflow:hidden}
+.pbar i{display:block;height:100%;width:0;background:var(--pur);transition:width .15s}
+.sw{display:flex;flex-wrap:wrap;gap:10px}
+.sw button{width:38px;height:38px;border-radius:50%;border:2px solid transparent;cursor:pointer}
+.sw button.sel{border-color:var(--txt)}
+.vt{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.vt button{background:var(--card);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:8px 10px;font:13px ui-monospace,monospace}
+.pvwrap{margin:14px 0 4px}
+.pvh{font-size:11px;letter-spacing:1px;color:var(--mut);margin-bottom:4px}
+.pv{background:#313338;border-radius:10px;padding:12px;color:#dbdee1;font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow:hidden;word-break:break-word}
+.pe{color:#949ba4;font-size:13px}
+.pm{display:flex;gap:10px}
+.av{width:36px;height:36px;border-radius:50%;flex:none;object-fit:cover}
+.av.ph{background:var(--pur);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+.pb{min-width:0;flex:1}
+.pn{color:#fff;font-weight:600;margin-right:6px}
+.tag{background:#5865f2;color:#fff;font-size:10px;border-radius:4px;padding:1px 4px;margin-right:8px;vertical-align:middle}
+.pt{color:#949ba4;font-size:11px}
+.pc{margin-top:2px}
+.pv code{background:#1e1f22;border-radius:4px;padding:0 4px;font:13px ui-monospace,monospace}
+.pv .cb{background:#2b2d31;border:1px solid #1e1f22;border-radius:6px;padding:8px;margin:4px 0;font:13px ui-monospace,monospace;white-space:pre-wrap;color:#dbdee1}
+.pv .bq{border-left:4px solid #4e5058;padding-left:10px;margin:2px 0}
+.pv .hd{font-size:20px;font-weight:700;margin:4px 0}
+.pv .lnk{color:#00a8fc}
+.pv .sp{background:#1e1f22;color:transparent;border-radius:4px;cursor:pointer;padding:0 2px}
+.pv .sp.show{background:#3b3d44;color:inherit}
+.pv .tm{background:#4e505880;border-radius:4px;padding:0 3px}
+.pv .mn{background:#5865f24d;color:#c9cdfb;border-radius:4px;padding:0 3px}
+.em{display:flex;gap:12px;max-width:520px;margin-top:6px;background:#2b2d31;border-left:4px solid #4e5058;border-radius:4px;padding:8px 12px 12px}
+.emb{flex:1;min-width:0}
+.ea{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:#fff;margin-top:4px}
+.ea img,.ef2 img{width:20px;height:20px;border-radius:50%}
+.et{font-weight:700;color:#fff;margin-top:6px}
+.et.lnk{color:#00a8fc}
+.ed{font-size:14px;margin-top:4px}
+.efs{display:grid;grid-template-columns:repeat(12,1fr);gap:8px;margin-top:8px}
+.ef{min-width:0}
+.ef b{display:block;font-size:13px;color:#fff}
+.ef span{font-size:14px}
+.eim{max-width:100%;border-radius:4px;margin-top:10px;display:block}
+.eth{width:64px;height:64px;object-fit:cover;border-radius:4px;flex:none}
+.ef2{display:flex;align-items:center;gap:8px;font-size:12px;color:#b5bac1;margin-top:10px}
+.at{max-width:260px;max-height:220px;border-radius:6px;margin-top:6px;display:block}
+.at.spl:not(.show){filter:blur(20px)}
+.fch{display:inline-block;background:#2b2d31;border-radius:6px;padding:8px 10px;margin-top:6px;font-size:13px;color:#00a8fc}
+.cbn{display:inline-block;background:#4e5058;color:#fff;border-radius:4px;padding:6px 14px;margin:6px 6px 0 0;font-size:14px;font-weight:600}
+.shell{flex:1;display:flex;min-height:0}
+.shell main{min-width:0}
+.rail{width:58px;flex:none;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 0;background:linear-gradient(180deg,var(--card2),var(--card));border-right:1px solid var(--line)}
+.rb{width:50px;border:0;background:none;color:var(--mut);display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0;border-radius:12px;font:700 9px ui-monospace,monospace;letter-spacing:.5px;cursor:pointer;margin:0}
+.rb svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.rb.on{color:#fff;background:linear-gradient(135deg,var(--pur),var(--pur2))}
+.vh{margin:4px 0 8px;font-size:12px;letter-spacing:1px;color:var(--mut);text-transform:uppercase}
+.srch{margin:0 0 4px}
+.ah{width:100%;display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:12px;color:var(--txt);padding:12px;font:700 13px ui-monospace,monospace;cursor:pointer;margin-top:8px;text-align:left}
+.ah .ad{width:10px;height:26px;border-radius:5px;background:linear-gradient(var(--g1),var(--g2))}
+.ah em{margin-left:auto;font-style:normal;color:var(--mut);font-size:11px}
+.ah i{width:7px;height:7px;border-right:2px solid var(--mut);border-bottom:2px solid var(--mut);transform:rotate(45deg);transition:transform .2s;margin:0 4px 3px 2px}
+.ah.open i{transform:rotate(-135deg);margin-bottom:-3px}
+.ab{display:none;grid-template-columns:1fr 1fr;gap:8px;padding:8px 0 2px}
+.ab.open{display:grid}
+.kc{position:relative;min-height:98px;border-radius:14px;padding:12px 10px 10px;background:linear-gradient(135deg,var(--g1),var(--g2));color:#fff;cursor:pointer;overflow:hidden;box-shadow:0 4px 14px #0006}
+.kc:active{transform:scale(.97)}
+.ki{width:34px;height:34px;border-radius:10px;background:#ffffff2e;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px}
+.kn{font-weight:800;font-size:13px;margin-top:8px;line-height:1.2;padding-right:20px}
+.kd{font-size:10px;opacity:.85;margin-top:3px;line-height:1.3}
+.kp{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;border:0;background:#ffffff38;color:#fff;font:700 18px/1 ui-monospace,monospace;cursor:pointer;padding:0;margin:0}
+.kp.in{background:#fff;color:#0f7a43;font-size:15px}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">RANDOMCORD<small>WEBHOOK CONTROL CENTER</small></div>
+  <div id="status">NO TARGET</div>
+</header>
+
+<div class="shell">
+<nav class="rail" id="rail"></nav>
+<main id="main">
+  <div id="common">
+    <label>Target Discord Webhook URL</label>
+    <input id="url" type="url" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://discord.com/api/webhooks/ID/TOKEN">
+    <label>Input String — Message / Content / Variable Data</label>
+    <textarea id="msg" placeholder="Type your message here. Used by Send, Embed, Edit, Link Button and more."></textarea>
+    <div class="mrow"><button class="lnkbtn" id="clrmsg">clear</button><span class="cnt" data-for="msg" data-max="2000"></span></div>
+    <div class="tb" id="tb"></div>
+  </div>
+  <div id="views"></div>
+  <div id="panel" style="display:none"></div>
+</main>
+</div>
+
+<div id="toast"></div>
+<div id="log"><div class="ok">[System Ready] RANDOMCORD dashboard loaded.</div></div>
+
+<div id="lock">
+  <div class="logo">RANDOMCORD<small>SESSION CLOSED</small></div>
+  <button class="btn g" style="margin-top:28px" id="unlock">RESTART SYSTEM</button>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const KEY='randomcord_v1';
+const DEF=()=>({hooks:[],current:'',templates:[],links:[],queue:[],history:[],embeds:[],presets:[],outbox:[],myp:[],cust:[],lastId:'',
+  draft:{msg:'',em:null,f:{}},
+  settings:{username:'',avatar:'',users:false,roles:false,everyone:false,thread_id:'',thread_name:'',thread_tags:'',theme:'dark',accent:'#8b5cf6'}});
+const merge=d=>{const b=DEF();return{...b,...d,draft:{...b.draft,...(d.draft||{})},settings:{...b.settings,...(d.settings||{})}}};
+let S=DEF();
+try{const d=JSON.parse(localStorage.getItem(KEY)||'null');if(d)S=merge(d)}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+let saveT;
+const saveSoon=()=>{clearTimeout(saveT);saveT=setTimeout(save,400)};
+
+function shade(h,f){const n=parseInt(h.slice(1),16);return'#'+[n>>16&255,n>>8&255,n&255].map(x=>Math.round(x*f).toString(16).padStart(2,'0')).join('')}
+function applyTheme(){
+  const s=S.settings,r=document.documentElement;
+  let m=s.theme;
+  if(m==='auto')m=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
+  r.dataset.theme=m;
+  const a=/^#[0-9a-f]{6}$/i.test(s.accent)?s.accent:'#8b5cf6';
+  r.style.setProperty('--pur',a);r.style.setProperty('--pur2',shade(a,.72));r.style.setProperty('--ring',a+'33');
+  const mt=document.querySelector('meta[name=theme-color]');
+  if(mt)mt.content=m==='light'?'#f6f3fc':'#08060d'}
+applyTheme();
+
+function log(m,t='inf'){const d=document.createElement('div');d.className=t;
+  d.textContent=new Date().toLocaleTimeString([], {hour12:false})+'  '+m;
+  const l=$('#log');l.appendChild(d);l.scrollTop=l.scrollHeight;
+  while(l.children.length>200)l.removeChild(l.firstChild)}
+
+let toastT;
+function toast(m,undo){
+  const t=$('#toast');
+  t.innerHTML=`<span>${esc(m)}</span>${undo?'<button class="btn" id="tu" style="margin:0;padding:8px 14px">UNDO</button>':''}`;
+  t.classList.add('on');
+  if(undo)$('#tu').onclick=()=>{undo();t.classList.remove('on')};
+  clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),7000)}
+function removeAt(arr,i,label,redraw){
+  if(i<0||i>=S[arr].length)return;
+  const item=S[arr][i];S[arr].splice(i,1);save();redraw();
+  toast(label+' removed',()=>{S[arr].splice(i,0,item);save();redraw()})}
+function clearArr(arr,label,redraw){
+  const old=S[arr];if(!old.length)return;
+  S[arr]=[];save();redraw();
+  toast(label+' cleared',()=>{S[arr]=old;save();redraw()})}
+
+const HOOK_RE=/^https:\/\/((canary|ptb)\.)?(discord|discordapp)\.com\/api(\/v\d+)?\/webhooks\/\d+\/[\w-]+$/;
+const clean=u=>(u||'').trim().split('?')[0].replace(/\/+$/,'');
+const url=()=>clean($('#url').value);
+function needUrl(){const u=url();if(!HOOK_RE.test(u)){log('Invalid or missing webhook URL.','err');return null}return u}
+function refreshStatus(){const u=url(),s=$('#status');
+  if(!u){s.textContent='NO TARGET';s.className=''}
+  else if(HOOK_RE.test(u)){s.textContent='STATUS: AUTHENTICATED';s.className='ok'}
+  else{s.textContent='BAD URL';s.className='bad'}
+  S.current=$('#url').value.trim();save()}
+const msgText=()=>$('#msg').value;
+
+function vars(s){
+  if(typeof s!=='string'||s.indexOf('{')<0)return s;
+  const d=new Date();
+  return s.replace(/\{(date|time|datetime|unix|day|month|year|random|randint:\d+-\d+|pick:[^{}]+)\}/gi,(m,k)=>{
+    const l=k.toLowerCase();
+    if(l==='date')return d.toLocaleDateString();
+    if(l==='time')return d.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
+    if(l==='datetime')return d.toLocaleString();
+    if(l==='unix')return String(Math.floor(d/1000));
+    if(l==='day')return d.toLocaleDateString(undefined,{weekday:'long'});
+    if(l==='month')return d.toLocaleDateString(undefined,{month:'long'});
+    if(l==='year')return String(d.getFullYear());
+    if(l==='random')return Math.random().toString(36).slice(2,8);
+    if(l.startsWith('randint:')){const[a,b]=l.slice(8).split('-').map(Number);const lo=Math.min(a,b),hi=Math.max(a,b);return String(lo+Math.floor(Math.random()*(hi-lo+1)))}
+    if(l.startsWith('pick:')){const o=k.slice(5).split('|');return o[Math.floor(Math.random()*o.length)]}
+    return m})}
+function deepVars(o){
+  if(typeof o==='string')return vars(o);
+  if(Array.isArray(o))return o.map(deepVars);
+  if(o&&typeof o==='object'){const r={};for(const k in o)r[k]=deepVars(o[k]);return r}
+  return o}
+
+const mentions=()=>{const s=S.settings,p=[];if(s.users)p.push('users');if(s.roles)p.push('roles');if(s.everyone)p.push('everyone');return{parse:p}};
+function base(extra={}){const s=S.settings,p={allowed_mentions:mentions()};
+  if(s.username)p.username=s.username;
+  if(s.avatar)p.avatar_url=s.avatar;
+  if(s.thread_name&&!s.thread_id){
+    p.thread_name=s.thread_name;
+    const t=(s.thread_tags||'').split(/[\s,]+/).filter(x=>/^\d+$/.test(x));
+    if(t.length)p.applied_tags=t}
+  return{...p,...extra}}
+const intColor=h=>{h=(h||'').replace('#','');return /^[0-9a-f]{6}$/i.test(h)?parseInt(h,16):undefined};
+const embedChars=list=>list.reduce((n,e)=>n+(e.title||'').length+(e.description||'').length+((e.footer&&e.footer.text)||'').length+((e.author&&e.author.name)||'').length+(e.fields||[]).reduce((m,f)=>m+f.name.length+f.value.length,0),0);
+
+function xhr(method,full,fd,onp){
+  return new Promise(res=>{
+    const x=new XMLHttpRequest();
+    x.open(method,full);
+    x.upload.onprogress=e=>{if(e.lengthComputable&&onp)onp(e.loaded/e.total)};
+    x.onload=()=>res({status:x.status,text:x.responseText});
+    x.onerror=()=>res({status:0,text:''});
+    x.send(fd)})}
+
+function addHist(u,d,p,tid){
+  const e=d.embeds&&d.embeds[0];
+  const hasFile=d.attachments&&d.attachments.length;
+  let text=d.content||(e&&(e.title||e.description))||'';
+  if(hasFile)text=(text?text+' ':'')+'[file: '+d.attachments.map(a=>a.filename).join(', ')+']';
+  const h=S.hooks.find(x=>clean(x.url)===u);
+  S.history.unshift({id:d.id,url:u,hook:h?h.name:'Webhook …'+u.slice(-6),t:Date.now(),text:text.slice(0,300),content:(d.content||'').slice(0,2000),thread:tid||(p&&p.thread_name?d.channel_id:''),pl:hasFile?null:p,pin:false});
+  let n=0;S.history=S.history.filter(x=>x.pin||++n<=100);
+  save()}
+
+async function api(u,o={}){
+  const method=o.method||'POST',path=o.path||'',files=o.files,query=o.query||{};
+  const payload=o.payload==null?o.payload:deepVars(o.payload);
+  const q=new URLSearchParams(query);
+  if(method==='POST'||method==='PATCH')q.set('wait','true');
+  const tid=o.thread!==undefined?o.thread:S.settings.thread_id;
+  if(tid&&method!=='GET')q.set('thread_id',tid);
+  const full=u+path+(q.toString()?'?'+q.toString():'');
+  for(let a=0;a<4;a++){
+    let status,txt;
+    if(files&&files.length){
+      const fd=new FormData();
+      fd.append('payload_json',JSON.stringify({...payload,attachments:files.map((f,i)=>({id:i,filename:f.name}))}));
+      files.forEach((f,i)=>fd.append('files['+i+']',f.blob,f.name));
+      const r=await xhr(method,full,fd,o.onProgress);status=r.status;txt=r.text;
+    }else{
+      const opt={method};
+      if(method!=='GET'&&method!=='DELETE'){opt.headers={'Content-Type':'application/json'};opt.body=JSON.stringify(payload)}
+      try{const r=await fetch(full,opt);status=r.status;txt=await r.text()}catch(e){status=0;txt=e.message}
+    }
+    if(status===0){
+      if(method==='POST'&&path===''&&!(files&&files.length)&&!o.noQueue&&navigator.onLine===false){
+        S.outbox.push({id:Date.now()+Math.random(),url:u,payload,thread:tid,t:Date.now()});save();
+        log('Offline — message queued in Outbox.','wrn');toast('Offline: message queued',null);
+        return{ok:false,queued:true}}
+      log('Network error'+(txt?': '+txt:'.'),'err');return{ok:false}}
+    let data=null;try{data=txt?JSON.parse(txt):null}catch(e){data=txt}
+    if(status===429){
+      const w=Math.ceil(((data&&data.retry_after)||2)*1000);
+      log('Rate limited. Waiting '+(w/1000).toFixed(1)+'s…','wrn');await sleep(w+250);continue}
+    if(status<200||status>=300){
+      log('HTTP '+status+': '+(data&&data.message?data.message:String(txt).slice(0,160)),'err');
+      return{ok:false,status,data}}
+    if(data&&data.id&&method==='POST'&&path===''){S.lastId=data.id;addHist(u,data,payload,tid)}
+    return{ok:true,status,data}}
+  log('Gave up after repeated rate limits.','err');return{ok:false}}
+
+let flushing=false;
+async function flushOutbox(){
+  if(flushing||!S.outbox.length||navigator.onLine===false)return;
+  flushing=true;
+  while(S.outbox.length&&navigator.onLine!==false){
+    const it=S.outbox[0];
+    const r=await api(it.url,{payload:it.payload,thread:it.thread,noQueue:true});
+    if(r.ok){S.outbox.shift();save();log('Queued message delivered.','ok')}
+    else if(r.status===undefined)break;
+    else{S.outbox.shift();save();log('Queued message dropped (Discord rejected it).','err')}}
+  flushing=false;
+  if(cur&&cur.live)cur.live()}
+window.addEventListener('online',flushOutbox);
+setInterval(flushOutbox,15000);
+
+function send(payload,opts){
+  const u=needUrl();if(!u)return Promise.resolve({ok:false});
+  if(payload&&typeof payload.content==='string'&&vars(payload.content).length>2000){
+    log('Message is '+vars(payload.content).length+' characters (limit 2000). Use Message Splitter (27).','err');return Promise.resolve({ok:false})}
+  if(payload&&Array.isArray(payload.embeds)){
+    if(payload.embeds.length>10){log('Too many embeds (limit 10).','err');return Promise.resolve({ok:false})}
+    const n=embedChars(deepVars(payload.embeds));
+    if(n>6000){log('Embed text is '+n+' characters (limit 6000 per message).','err');return Promise.resolve({ok:false})}}
+  return api(u,{payload,...opts})}
+async function sendLog(payload,opts,label='Message sent'){
+  const r=await send(payload,opts);
+  if(r.ok)log(label+(r.data&&r.data.id?' (id '+r.data.id+')':'.'),'ok');
+  return r}
+
+const F=(label,id,ph='',type='text',val='')=>`<label>${label}</label><input id="${id}" type="${type}" placeholder="${esc(ph)}" value="${esc(val)}" autocomplete="off" autocapitalize="off">`;
+const T=(label,id,ph='',val='',h=90)=>`<label>${label}</label><textarea id="${id}" placeholder="${esc(ph)}" style="min-height:${h}px">${esc(val)}</textarea>`;
+const C=(label,id,on=false)=>`<label class="chk"><input type="checkbox" id="${id}" ${on?'checked':''}>${label}</label>`;
+const B=(txt,id,cls='')=>`<button class="btn ${cls}" id="${id}">${txt}</button>`;
+const CN=(id,max)=>`<div class="cnt" data-for="${id}" data-max="${max}"></div>`;
+const v=id=>$('#'+id).value.trim();
+const on=(id,fn)=>{const e=$('#'+id);if(e)e.onclick=fn};
+const PV='<div class="pvwrap"><div class="pvh">PREVIEW</div><div class="pv" id="pv"></div></div>';
+const copyText=async t=>{try{await navigator.clipboard.writeText(t);return true}catch(e){return false}};
+
+function insertAt(t){
+  const e=$('#msg'),s=e.selectionStart,n=e.selectionEnd;
+  e.value=e.value.slice(0,s)+t+e.value.slice(n);
+  const c=s+t.length;e.setSelectionRange(c,c);
+  e.dispatchEvent(new Event('input'))}
+function wrap(a,b){
+  const e=$('#msg'),s=e.selectionStart,n=e.selectionEnd,sel=e.value.slice(s,n);
+  e.value=e.value.slice(0,s)+a+sel+b+e.value.slice(n);
+  const c=sel?n+a.length+b.length:s+a.length;
+  e.focus();e.setSelectionRange(c,c);
+  e.dispatchEvent(new Event('input'))}
+function linkBtn(){
+  const u=prompt('Link URL','https://');if(!u)return;
+  const e=$('#msg'),sel=e.value.slice(e.selectionStart,e.selectionEnd)||'text';
+  insertAt('['+sel+']('+u+')')}
+function timeBtn(){
+  const m=prompt('Minutes from now (negative = past, 0 = now)','0');if(m===null)return;
+  const t=Math.floor(Date.now()/1000)+Math.round((+m||0)*60);
+  const f=prompt('Style: t T d D f F R','R');
+  insertAt('<t:'+t+':'+(/^[tTdDfFR]$/.test(f||'')?f:'R')+'>')}
+const TB=[['B',()=>wrap('**','**')],['I',()=>wrap('*','*')],['U',()=>wrap('__','__')],['S',()=>wrap('~~','~~')],['code',()=>wrap('`','`')],['block',()=>wrap('```\n','\n```')],['spoiler',()=>wrap('||','||')],['quote',()=>wrap('> ','')],['link',linkBtn],['time',timeBtn]];
+TB.forEach(([n,f])=>{const b=document.createElement('button');b.textContent=n;b.onclick=f;$('#tb').appendChild(b)});
+$('#tb').addEventListener('mousedown',e=>e.preventDefault());
+$('#clrmsg').onclick=()=>{
+  const old=$('#msg').value;if(!old)return;
+  $('#msg').value='';$('#msg').dispatchEvent(new Event('input'));
+  toast('Input cleared',()=>{$('#msg').value=old;$('#msg').dispatchEvent(new Event('input'))})};
+
+function fmtTime(n,f){
+  const d=new Date(n*1000);
+  const o={t:{hour:'numeric',minute:'2-digit'},T:{hour:'numeric',minute:'2-digit',second:'2-digit'},d:{dateStyle:'short'},D:{dateStyle:'long'},f:{dateStyle:'long',timeStyle:'short'},F:{dateStyle:'full',timeStyle:'short'}};
+  if(f==='R'){
+    const s=Math.round((d-Date.now())/1000),a=Math.abs(s);
+    const u=a<60?['second',s]:a<3600?['minute',Math.round(s/60)]:a<86400?['hour',Math.round(s/3600)]:a<2592000?['day',Math.round(s/86400)]:a<31536000?['month',Math.round(s/2592000)]:['year',Math.round(s/31536000)];
+    return new Intl.RelativeTimeFormat(undefined,{numeric:'auto'}).format(u[1],u[0])}
+  return d.toLocaleString(undefined,o[f]||o.f)}
+
+function md(src){
+  const keep=[];
+  const hold=h=>'\u0001'+(keep.push(h)-1)+'\u0001';
+  let t=esc(src);
+  t=t.replace(/```(?:[\w+-]+\n)?([\s\S]*?)```/g,(m,c)=>hold('<pre class="cb">'+c.replace(/^\n|\n$/g,'')+'</pre>'));
+  t=t.replace(/`([^`\n]+)`/g,(m,c)=>hold('<code>'+c+'</code>'));
+  t=t.replace(/&lt;t:(\d+)(?::([tTdDfFR]))?&gt;/g,(m,n,f)=>hold('<span class="tm">'+esc(fmtTime(+n,f||'f'))+'</span>'));
+  t=t.replace(/\[([^\]\n]+)\]\((https?:\/\/[^\s)]+)\)/g,(m,a)=>hold('<span class="lnk">'+a+'</span>'));
+  t=t.replace(/https?:\/\/[^\s<]+/g,u=>hold('<span class="lnk">'+u+'</span>'));
+  t=t.replace(/@(everyone|here)\b/g,m=>hold('<span class="mn">'+m+'</span>'));
+  t=t.replace(/\*\*\*([\s\S]+?)\*\*\*/g,'<b><i>$1</i></b>');
+  t=t.replace(/\*\*([\s\S]+?)\*\*/g,'<b>$1</b>');
+  t=t.replace(/(^|[^*])\*(?![\s*])([^*\n]+?)\*(?!\*)/g,'$1<i>$2</i>');
+  t=t.replace(/__([\s\S]+?)__/g,'<u>$1</u>');
+  t=t.replace(/~~([\s\S]+?)~~/g,'<s>$1</s>');
+  t=t.replace(/\|\|([\s\S]+?)\|\|/g,'<span class="sp">$1</span>');
+  t=t.replace(/^(?:&gt;&gt;&gt; |&gt; )(.*)$/gm,'<div class="bq">$1</div>');
+  t=t.replace(/^#{1,3} (.+)$/gm,'<div class="hd">$1</div>');
+  t=t.replace(/<\/div>\n/g,'</div>').replace(/\n/g,'<br>');
+  for(let i=0;i<3;i++)t=t.replace(/\u0001(\d+)\u0001/g,(m,k)=>keep[+k]);
+  return t}
+
+const safe=u=>/^https?:\/\//i.test(u||'')?esc(u):'';
+
+function embedHtml(e){
+  if(!e||typeof e!=='object')return '';
+  const col=typeof e.color==='number'?'#'+e.color.toString(16).padStart(6,'0'):'#4e5058';
+  let h=`<div class="em" style="border-left-color:${col}"><div class="emb">`;
+  if(e.author&&e.author.name)h+=`<div class="ea">${safe(e.author.icon_url)?`<img src="${safe(e.author.icon_url)}" alt="">`:''}<span>${esc(e.author.name)}</span></div>`;
+  if(e.title)h+=`<div class="et${e.url?' lnk':''}">${md(String(e.title))}</div>`;
+  if(e.description)h+=`<div class="ed">${md(String(e.description))}</div>`;
+  if(Array.isArray(e.fields)&&e.fields.length){
+    h+='<div class="efs">';
+    e.fields.forEach(f=>{h+=`<div class="ef" style="grid-column:span ${f.inline?4:12}"><b>${md(String(f.name))}</b><span>${md(String(f.value))}</span></div>`});
+    h+='</div>'}
+  if(e.image&&safe(e.image.url))h+=`<img class="eim" src="${safe(e.image.url)}" alt="">`;
+  if(e.footer&&e.footer.text||e.timestamp){
+    h+=`<div class="ef2">${e.footer&&safe(e.footer.icon_url)?`<img src="${safe(e.footer.icon_url)}" alt="">`:''}<span>${esc((e.footer&&e.footer.text)||'')}${e.footer&&e.footer.text&&e.timestamp?' • ':''}${e.timestamp?esc(new Date(e.timestamp).toLocaleString()):''}</span></div>`}
+  h+='</div>';
+  if(e.thumbnail&&safe(e.thumbnail.url))h+=`<img class="eth" src="${safe(e.thumbnail.url)}" alt="">`;
+  return h+'</div>'}
+
+function renderPreview(el,p,files=[]){
+  try{
+    p=deepVars(p||{});
+    const embeds=Array.isArray(p.embeds)?p.embeds:[];
+    if(!p.content&&!embeds.length&&!files.length&&!(p.components&&p.components.length)){el.innerHTML='<div class="pe">Nothing to preview yet.</div>';return}
+    const name=p.username||'Webhook';
+    const av=safe(p.avatar_url)?`<img class="av" src="${safe(p.avatar_url)}" alt="">`:`<div class="av ph">${esc(String(name)[0].toUpperCase())}</div>`;
+    let h=`<div class="pm">${av}<div class="pb"><div><span class="pn">${esc(name)}</span><span class="tag">APP</span><span class="pt">Today at ${esc(new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}))}</span></div>`;
+    if(p.content)h+=`<div class="pc">${md(String(p.content))}</div>`;
+    embeds.forEach(e=>{h+=embedHtml(e)});
+    files.forEach(f=>{
+      if(f.url)h+=`<img class="at${/^SPOILER_/.test(f.name)?' spl':''}" src="${f.url}" alt="">`;
+      else h+=`<div class="fch${/^SPOILER_/.test(f.name)?' spl':''}">${esc(f.name)}</div>`});
+    (p.components||[]).forEach(r=>(r.components||[]).forEach(c=>{h+=`<span class="cbn">${esc(c.label||'Button')} ↗</span>`}));
+    el.innerHTML=h+'</div></div>'
+  }catch(err){el.innerHTML='<div class="pe">Preview unavailable.</div>'}}
+
+function imgCheck(u){
+  return new Promise(res=>{
+    const im=new Image();
+    const t=setTimeout(()=>{im.src='';res(null)},8000);
+    im.onload=()=>{clearTimeout(t);res({w:im.naturalWidth,h:im.naturalHeight})};
+    im.onerror=()=>{clearTimeout(t);res(null)};
+    im.referrerPolicy='no-referrer';im.src=u})}
+async function checkUrl(u){
+  if(!/^https?:\/\//i.test(u))return{cls:'r',msg:'Not an http(s) link'};
+  const im=await imgCheck(u);
+  if(im)return{cls:'g',msg:'Image OK · '+im.w+'×'+im.h};
+  try{
+    const c=new AbortController();const t=setTimeout(()=>c.abort(),8000);
+    await fetch(u,{mode:'no-cors',signal:c.signal,cache:'no-store'});clearTimeout(t);
+    return{cls:'a',msg:'Reachable, but not loading as an image'}
+  }catch(e){return{cls:'r',msg:'Unreachable or blocked'}}}
+
+const blank=()=>({title:'',desc:'',color:S.settings.accent,nocolor:false,eurl:'',author:'',aicon:'',footer:'',ficon:'',image:'',thumb:'',ts:false,fields:[]});
+const tp=o=>({...blank(),...o});
+function embedToState(e){
+  const s=blank();
+  s.title=e.title||'';s.desc=e.description||'';
+  if(typeof e.color==='number')s.color='#'+e.color.toString(16).padStart(6,'0');else s.nocolor=true;
+  s.eurl=e.url||'';
+  s.author=(e.author&&e.author.name)||'';s.aicon=(e.author&&e.author.icon_url)||'';
+  s.footer=(e.footer&&e.footer.text)||'';s.ficon=(e.footer&&e.footer.icon_url)||'';
+  s.image=(e.image&&e.image.url)||'';s.thumb=(e.thumbnail&&e.thumbnail.url)||'';
+  s.ts=!!e.timestamp;
+  s.fields=(e.fields||[]).map(f=>({name:f.name,value:f.value,inline:!!f.inline}));
+  return s}
+function eEmbed(st){
+  const fl=(st.fields||[]).filter(f=>f.name.trim()&&f.value.trim()).slice(0,25).map(f=>({name:f.name.trim(),value:f.value.trim(),inline:f.inline}));
+  if(!(st.title||st.desc||st.author||st.footer||st.image||st.thumb||fl.length))return null;
+  const e={};
+  if(st.title)e.title=st.title;
+  if(st.desc)e.description=st.desc;
+  if(!st.nocolor)e.color=intColor(st.color);
+  if(st.eurl)e.url=st.eurl;
+  if(st.author)e.author={name:st.author,...(st.aicon?{icon_url:st.aicon}:{})};
+  if(st.footer)e.footer={text:st.footer,...(st.ficon?{icon_url:st.ficon}:{})};
+  if(st.image)e.image={url:st.image};
+  if(st.thumb)e.thumbnail={url:st.thumb};
+  if(st.ts)e.timestamp=new Date().toISOString();
+  if(fl.length)e.fields=fl;
+  return e}
+
+const TPL=[
+  {name:'Announcement',embeds:[tp({title:'📢 Announcement',desc:'Write your news here.\n\n**What’s new**\n• First point\n• Second point\n• Third point',color:'#8b5cf6',footer:'RANDOMCORD',ts:true})]},
+  {name:'Giveaway',embeds:[tp({title:'🎉 GIVEAWAY',desc:'React with 🎉 to enter!',color:'#ec4899',fields:[{name:'Prize',value:'Your prize here',inline:true},{name:'Winners',value:'1',inline:true},{name:'Hosted by',value:'Your name',inline:true}],footer:'Good luck!'})]},
+  {name:'Changelog',embeds:[tp({title:'🛠 Changelog — v1.0.0',color:'#3b82f6',fields:[{name:'Added',value:'• New feature',inline:false},{name:'Changed',value:'• Updated behavior',inline:false},{name:'Fixed',value:'• Bug fix',inline:false}],footer:'Released {date}'})]},
+  {name:'Server rules',embeds:[tp({title:'📜 Server Rules',desc:'**1.** Be respectful to everyone\n**2.** No spam or self-promotion\n**3.** Keep topics in the right channels\n**4.** Follow the Discord Terms of Service',color:'#ef4444'})]},
+  {name:'Status update',embeds:[tp({title:'🟢 All systems operational',color:'#22c55e',fields:[{name:'API',value:'Online',inline:true},{name:'Bot',value:'Online',inline:true},{name:'Website',value:'Online',inline:true}],footer:'Last updated {datetime}'})]},
+  {name:'Event',embeds:[tp({title:'📅 Community Event',desc:'Join us and bring a friend.',color:'#eab308',fields:[{name:'When',value:'{date} at 8:00 PM',inline:true},{name:'Where',value:'Voice channel',inline:true},{name:'Host',value:'Your name',inline:true}]})]},
+  {name:'Welcome',embeds:[tp({title:'👋 Welcome!',desc:'Glad you’re here. Read the rules, grab your roles and say hi.',color:'#06b6d4'})]},
+  {name:'Maintenance',embeds:[tp({title:'🔧 Scheduled maintenance',desc:'We’ll be briefly offline while we make improvements.',color:'#f97316',fields:[{name:'Starts',value:'{datetime}',inline:true},{name:'Expected length',value:'30 minutes',inline:true}]})]}
+];
+
+let EM=[blank()],ei=0,PENDING=null,SHARED_FILES=null;
+function loadIntoBuilder(o){PENDING=o;if(cur)closePanel();openPanel('03')}
+
+const rowHtml=(f,i)=>`<div class="frow"><input class="fn" placeholder="Field name" value="${esc(f.name||'')}"><input class="fv" placeholder="Field value" value="${esc(f.value||'')}"><div class="ln"><label class="chk"><input type="checkbox" class="fi" ${f.inline?'checked':''}>Inline</label><button class="x" data-rm="${i}">Remove</button></div></div>`;
+const readRows=()=>[...document.querySelectorAll('#e_fl .frow')].map(r=>({name:r.querySelector('.fn').value,value:r.querySelector('.fv').value,inline:r.querySelector('.fi').checked}));
+const renderRows=a=>{$('#e_fl').innerHTML=a.map(rowHtml).join('')};
+function eState(){
+  const g=id=>$('#'+id).value.trim();
+  return{title:g('e_title'),desc:g('e_desc'),color:$('#e_color').value,nocolor:$('#e_nocolor').checked,eurl:g('e_eurl'),author:g('e_author'),aicon:g('e_aicon'),footer:g('e_footer'),ficon:g('e_ficon'),image:g('e_image'),thumb:g('e_thumb'),ts:$('#e_ts').checked,fields:readRows()}}
+function eFill(st){
+  const set=(id,val)=>{$('#'+id).value=val||''};
+  set('e_title',st.title);set('e_desc',st.desc);set('e_eurl',st.eurl);set('e_author',st.author);set('e_aicon',st.aicon);set('e_footer',st.footer);set('e_ficon',st.ficon);set('e_image',st.image);set('e_thumb',st.thumb);
+  $('#e_color').value=st.color||S.settings.accent;$('#e_nocolor').checked=!!st.nocolor;$('#e_ts').checked=!!st.ts;
+  renderRows(st.fields||[])}
+function eTabs(){
+  const t=$('#e_tabs');if(!t)return;
+  t.innerHTML=EM.map((s,i)=>`<button class="btn o${i===ei?' on':''}" data-t="${i}" style="margin:4px 6px 0 0;padding:8px 14px">${i+1}${s.title?' · '+esc(s.title.slice(0,10)):''}</button>`).join('')}
+function eShow(i){EM[ei]=eState();ei=i;eFill(EM[ei]);eTabs();refresh()}
+
+function filePanel(spoiler){
+  let files=[],urls=[],pvf=[];
+  const nm=f=>spoiler?'SPOILER_'+f.name.replace(/^SPOILER_/,''):f.name;
+  const size=b=>b>1048576?(b/1048576).toFixed(1)+' MB':Math.max(1,Math.round(b/1024))+' KB';
+  const drop=()=>{urls.forEach(u=>URL.revokeObjectURL(u));urls=[];pvf=[]};
+  const list=()=>{
+    drop();
+    $('#fl').innerHTML=files.map((f,i)=>{
+      let th,u='';
+      if(f.type.startsWith('image/')){u=URL.createObjectURL(f);urls.push(u);th=`<img class="th" src="${u}" alt="">`}
+      else th='<div class="th ic">FILE</div>';
+      pvf.push({name:nm(f),url:u});
+      const big=f.size>10485760;
+      return `<div class="row">${th}<span>${esc(nm(f))}<br><small class="${big?'wrn':'inf'}">${size(f.size)}${big?' — may be too large':''}</small></span><button data-r="${i}">✕</button></div>`}).join('')||'<p class="hint">No files picked.</p>';
+    refresh()};
+  return{
+    n:spoiler?'Send Spoiler File':'Send File',
+    h:()=>`<p class="hint">Add up to 10 files. The input string is the caption. Upload limits depend on the server (usually 10 MB per file).</p><label>Add files</label><input type="file" id="f" multiple><div id="fl"></div><div class="pbar" id="pbw" style="display:none"><i id="pb"></i></div><div class="hint" id="pbt"></div>${PV}${B(spoiler?'UPLOAD AS SPOILER':'UPLOAD','go','g')}${B('CLEAR','cl','o')}`,
+    pv:()=>({p:base({content:msgText()}),files:pvf}),
+    i(){
+      files=SHARED_FILES?SHARED_FILES.slice(0,10):[];SHARED_FILES=null;
+      drop();list();
+      $('#f').onchange=e=>{files=files.concat([...e.target.files]).slice(0,10);e.target.value='';list()};
+      $('#fl').onclick=e=>{const b=e.target.closest('[data-r]');if(!b)return;files.splice(+b.dataset.r,1);list()};
+      on('cl',()=>{files=[];list()});
+      on('go',async()=>{
+        if(!files.length)return log('Pick a file first.','err');
+        const pb=$('#pb'),t=$('#pbt');
+        $('#pbw').style.display='block';pb.style.width='0';t.textContent='Uploading 0%';
+        const r=await sendLog(base({content:msgText()}),{files:files.map(f=>({blob:f,name:nm(f)})),onProgress:x=>{const p=Math.round(x*100);pb.style.width=p+'%';t.textContent='Uploading '+p+'%'}},spoiler?'Spoiler file sent':'File sent');
+        t.textContent=r.ok?'Done.':'Failed.';
+        if(r.ok){files=[];list()}})},
+    off:drop}}
+
+function splitText(t,max,num){
+  const lim=Math.max(200,max)-(num?14:0)-8;
+  const out=[];let rest=t.replace(/\r/g,''),open=false;
+  while(rest.length>lim){
+    let cut=rest.lastIndexOf('\n',lim);
+    if(cut<lim*.5)cut=rest.lastIndexOf(' ',lim);
+    if(cut<lim*.3)cut=lim;
+    let chunk=rest.slice(0,cut);
+    rest=rest.slice(cut).replace(/^[ \n]/,'');
+    if(open)chunk='```\n'+chunk;
+    open=(chunk.match(/```/g)||[]).length%2===1;
+    if(open)chunk+='\n```';
+    out.push(chunk)}
+  if(rest.length||!out.length)out.push(open?'```\n'+rest:rest);
+  return num&&out.length>1?out.map((c,i)=>'('+(i+1)+'/'+out.length+') '+c):out}
+
+let stopFlag=false;
+const P={};
+
+P['01']={n:'Send Message',
+  h:()=>`<p class="hint">Sends the input string above as a normal message.</p>${C('Text-to-speech','tts')}${PV}${B('SEND','go','g')}`,
+  pv:()=>({p:base({content:msgText()})}),
+  i(){on('go',()=>{if(!msgText().trim())return log('Type a message first.','err');sendLog(base({content:msgText(),tts:$('#tts').checked}))})}};
+
+P['02']={n:'Quick Embed',
+  h:()=>`<p class="hint">Input string becomes the embed description.</p>${F('Title','t')}${F('Color hex','c','#8b5cf6')}${PV}${B('SEND EMBED','go','g')}`,
+  pv:()=>{const e={description:msgText()};if(v('t'))e.title=v('t');const c=intColor(v('c'));if(c!==undefined)e.color=c;return{p:base({embeds:[e]})}},
+  i(){on('go',()=>{if(!msgText().trim()&&!v('t'))return log('Nothing to send.','err');sendLog(this.pv().p,0,'Embed sent')})}};
+
+P['03']={n:'Message + Embed',
+  h:()=>`<p class="hint">Input string is the message text. Add up to 10 embeds and switch between them with the tabs.</p>
+  <div class="etabs" id="e_tabs"></div>${B('+ ADD EMBED','e_new','o')}${B('REMOVE THIS EMBED','e_del','o')}
+  ${F('Title','e_title','Title')}${CN('e_title',256)}
+  ${T('Description','e_desc','Description','',80)}${CN('e_desc',4096)}
+  <label>Color</label><div class="crow"><input type="color" id="e_color" value="${S.settings.accent}"><label class="chk"><input type="checkbox" id="e_nocolor">No color bar</label></div>
+  ${F('Title link URL','e_eurl','https://','url')}
+  ${F('Author name','e_author')}${CN('e_author',256)}${F('Author icon URL','e_aicon','https://','url')}
+  ${F('Footer text','e_footer')}${CN('e_footer',2048)}${F('Footer icon URL','e_ficon','https://','url')}
+  ${F('Image URL','e_image','https://','url')}${F('Thumbnail URL','e_thumb','https://','url')}
+  ${C('Add timestamp','e_ts')}
+  <label>Fields</label><div id="e_fl"></div>${B('+ ADD FIELD','e_add','o')}
+  <div class="cnt" id="e_total"></div>
+  ${PV}${B('SEND','go','g')}${B('CHECK IMAGE URLS','e_chk','o')}
+  <label>Saved drafts</label>${F('Draft name','e_dn')}${B('SAVE DRAFT','e_sv','o')}<div id="e_dl"></div>`,
+  pv(){
+    EM[ei]=eState();
+    const list=EM.map(eEmbed).filter(Boolean);
+    const p=base({content:msgText()});
+    if(list.length)p.embeds=list;
+    S.draft.em={ei,list:EM};saveSoon();
+    eTabs();
+    const n=embedChars(list),t=$('#e_total');
+    if(t){t.textContent='Embed text: '+n+' / 6000 · '+list.length+' embed'+(list.length===1?'':'s');t.classList.toggle('over',n>6000)}
+    return{p}},
+  i(){
+    EM=[blank()];ei=0;
+    const pend=PENDING;PENDING=null;
+    if(pend){
+      EM=(pend.list&&pend.list.length?pend.list:[blank()]).map(x=>({...blank(),...x}));
+    }else if(S.draft.em&&S.draft.em.list&&S.draft.em.list.length){
+      EM=S.draft.em.list.map(x=>({...blank(),...x}));ei=Math.min(S.draft.em.ei||0,EM.length-1)}
+    eFill(EM[ei]);eTabs();
+    if(pend&&pend.content!==undefined){$('#msg').value=pend.content;$('#msg').dispatchEvent(new Event('input'))}
+    const dd=()=>{$('#e_dl').innerHTML=S.embeds.map((d,i)=>`<div class="row"><span><b>${esc(d.name)}</b><br>${esc(((d.list&&d.list[0]||d.st||{}).title||d.content||'').slice(0,50))}</span><div class="bt"><button data-l="${i}">Load</button><button data-d="${i}">X</button></div></div>`).join('')||'<p class="hint">No drafts yet.</p>'};
+    $('#e_tabs').onclick=e=>{const b=e.target.closest('[data-t]');if(b)eShow(+b.dataset.t)};
+    on('e_new',()=>{
+      if(EM.length>=10)return log('Max 10 embeds.','wrn');
+      EM[ei]=eState();EM.push(blank());ei=EM.length-1;eFill(EM[ei]);eTabs();refresh()});
+    on('e_del',()=>{
+      const snap=EM.map(x=>({...x})),si=ei;
+      EM[ei]=eState();
+      if(EM.length===1)EM=[blank()];else{EM.splice(ei,1);ei=Math.min(ei,EM.length-1)}
+      eFill(EM[ei]);eTabs();refresh();
+      toast('Embed removed',()=>{EM=snap;ei=si;eFill(EM[ei]);eTabs();refresh()})});
+    on('e_add',()=>{const st=eState();if(st.fields.length>=25)return log('Max 25 fields.','wrn');st.fields.push({name:'',value:'',inline:false});renderRows(st.fields);refresh()});
+    $('#e_fl').onclick=e=>{const b=e.target.closest('[data-rm]');if(!b)return;const f=readRows();f.splice(+b.dataset.rm,1);renderRows(f);refresh()};
+    on('go',()=>{const r=this.pv().p;if(!r.content.trim()&&!r.embeds)return log('Nothing to send.','err');sendLog(r)});
+    on('e_chk',async()=>{
+      const st=eState();
+      const us=[st.image,st.thumb,st.aicon,st.ficon,st.eurl].filter(Boolean);
+      if(!us.length)return log('No URLs in this embed to check.','wrn');
+      for(const u of us){const r=await checkUrl(u);log(u.slice(0,60)+' — '+r.msg,r.cls==='g'?'ok':r.cls==='a'?'wrn':'err')}});
+    on('e_sv',()=>{
+      const n=v('e_dn');if(!n)return log('Name the draft first.','err');
+      EM[ei]=eState();
+      S.embeds=S.embeds.filter(d=>d.name!==n);S.embeds.push({name:n,content:msgText(),list:EM.map(x=>({...x}))});save();dd();log('Draft saved.','ok')});
+    $('#e_dl').onclick=e=>{
+      const l=e.target.closest('[data-l]'),d=e.target.closest('[data-d]');
+      if(l){
+        const x=S.embeds[+l.dataset.l];
+        EM=(x.list||[x.st]).map(s=>({...blank(),...s}));ei=0;
+        eFill(EM[0]);eTabs();$('#msg').value=x.content||'';$('#msg').dispatchEvent(new Event('input'));log('Draft loaded.','ok')}
+      if(d)removeAt('embeds',+d.dataset.d,'Draft',dd)};
+    dd()}};
+
+P['04']=filePanel(false);
+P['05']=filePanel(true);
+
+P['06']={n:'Threads Config',
+  h:()=>`<p class="hint">Post into an existing thread by ID, or create a new forum post by title. Applies to every send. Leave blank to post normally.</p>${F('Existing thread ID','th','','text',S.settings.thread_id)}${F('New forum post title','tn','','text',S.settings.thread_name)}${F('Forum tag IDs (comma separated)','tg','','text',S.settings.thread_tags)}${B('SAVE','go','g')}${B('CLEAR','cl','o')}<label>Presets</label>${F('Preset name','pn')}${B('SAVE AS PRESET','ps','o')}<div id="pl"></div>`,
+  i(){
+    const draw=()=>{$('#pl').innerHTML=S.presets.map((p,i)=>`<div class="row"><span><b>${esc(p.name)}</b><br>${esc(p.thread_id?'thread '+p.thread_id:'new post: '+(p.thread_name||'-'))}</span><div class="bt"><button data-u="${i}">Use</button><button data-d="${i}">X</button></div></div>`).join('')||'<p class="hint">No presets yet.</p>'};
+    const read=()=>({thread_id:v('th'),thread_name:v('tn'),thread_tags:v('tg')});
+    const fill=o=>{$('#th').value=o.thread_id||'';$('#tn').value=o.thread_name||'';$('#tg').value=o.thread_tags||''};
+    on('go',()=>{Object.assign(S.settings,read());save();log('Thread settings saved.','ok')});
+    on('cl',()=>{
+      const old={thread_id:S.settings.thread_id,thread_name:S.settings.thread_name,thread_tags:S.settings.thread_tags};
+      Object.assign(S.settings,{thread_id:'',thread_name:'',thread_tags:''});save();fill({});
+      log('Thread settings cleared.','ok');
+      toast('Thread settings cleared',()=>{Object.assign(S.settings,old);save();if($('#th'))fill(old)})});
+    on('ps',()=>{const n=v('pn');if(!n)return log('Name the preset first.','err');S.presets.push({name:n,...read()});save();draw();log('Preset saved.','ok')});
+    $('#pl').onclick=e=>{
+      const u=e.target.closest('[data-u]'),d=e.target.closest('[data-d]');
+      if(u){const p=S.presets[+u.dataset.u];Object.assign(S.settings,{thread_id:p.thread_id,thread_name:p.thread_name,thread_tags:p.thread_tags});save();fill(p);log('Using preset '+p.name,'ok')}
+      if(d)removeAt('presets',+d.dataset.d,'Preset',draw)};
+    draw()}};
+
+P['07']={n:'Edit / Delete',
+  h:()=>`<p class="hint">Works on messages sent by this webhook. Edit uses the input string as the new text. Recent messages are also listed in History.</p>${F('Message ID','mid','','text',S.lastId)}${B('EDIT','ed','g')}${B('DELETE','del','r')}`,
+  i(){
+    on('ed',async()=>{const id=v('mid');if(!id)return log('Need a message ID.','err');const r=await send({content:msgText()},{method:'PATCH',path:'/messages/'+id});if(r.ok)log('Message edited.','ok')});
+    on('del',async()=>{const id=v('mid');if(!id)return log('Need a message ID.','err');if(!confirm('Delete message '+id+'?'))return;const r=await send(null,{method:'DELETE',path:'/messages/'+id});if(r.ok)log('Message deleted.','ok')})}};
+
+P['08']={n:'Bulk Send',
+  h:()=>`<p class="hint">One message per line, sent in order. Minimum delay 1 second to respect Discord rate limits.</p>${T('Messages (one per line)','lines','',' ',140)}${F('Delay between sends (ms)','dl','','number','1500')}${B('START','go','g')}${B('STOP','st','r')}`,
+  i(){
+    on('st',()=>{stopFlag=true});
+    on('go',async()=>{
+      const ls=$('#lines').value.split('\n').map(s=>s.trim()).filter(Boolean).slice(0,100);
+      if(!ls.length)return log('No lines.','err');
+      const d=Math.max(1000,+v('dl')||1500);stopFlag=false;log('Bulk send: '+ls.length+' messages…');let n=0;
+      for(const l of ls){
+        if(stopFlag){log('Stopped.','wrn');break}
+        const r=await send(base({content:l}));if(!r.ok&&!r.queued)break;
+        n++;log('Sent '+n+'/'+ls.length,'ok');await sleep(d)}
+      log('Bulk done: '+n+' sent.','ok')})}};
+
+P['09']={n:'Scheduled Send',
+  h:()=>`<p class="hint">Sends the input string at the chosen time. <b>RANDOMCORD must stay open</b> — missed items fire when you next open it.</p>${F('Send at','at','','datetime-local')}${B('SCHEDULE','go','g')}<div id="ql"></div>`,
+  i(){
+    const draw=()=>{
+      $('#ql').innerHTML=S.queue.map(q=>`<div class="row"><span>${new Date(q.at).toLocaleString()}<br>${esc((q.payload.content||'[embed]').slice(0,60))}</span><button data-id="${q.id}">Cancel</button></div>`).join('')||'<p class="hint">Nothing scheduled.</p>';
+      $('#ql').querySelectorAll('button').forEach(b=>b.onclick=()=>removeAt('queue',S.queue.findIndex(x=>x.id==b.dataset.id),'Scheduled message',draw))};
+    on('go',()=>{
+      const u=needUrl();if(!u)return;
+      const t=new Date($('#at').value).getTime();if(!t)return log('Pick a date/time.','err');
+      S.queue.push({id:Date.now(),at:t,url:u,payload:base({content:msgText()})});save();
+      log('Scheduled for '+new Date(t).toLocaleString(),'ok');draw()});
+    draw()}};
+
+P['10']={n:'Allowed Mentions',
+  h:()=>`<p class="hint">Controls what pings are allowed. All off = nobody gets pinged.</p>${C('Allow user pings','mu',S.settings.users)}${C('Allow role pings','mr',S.settings.roles)}${C('Allow @everyone / @here','me',S.settings.everyone)}${B('SAVE','go','g')}`,
+  i(){on('go',()=>{S.settings.users=$('#mu').checked;S.settings.roles=$('#mr').checked;S.settings.everyone=$('#me').checked;save();log('Mention rules saved.','ok')})}};
+
+P['11']={n:'Username / Avatar',
+  h:()=>`<p class="hint">Override the webhook's display name and picture for all sends.</p>${F('Username','un','','text',S.settings.username)}${F('Avatar image URL','av','https://','url',S.settings.avatar)}${PV}${B('SAVE','go','g')}${B('RESET','rs','o')}`,
+  pv:()=>{const p={content:msgText()||'This is how your messages will look.'};if(v('un'))p.username=v('un');if(v('av'))p.avatar_url=v('av');return{p}},
+  i(){
+    on('go',()=>{S.settings.username=v('un');S.settings.avatar=v('av');save();log('Identity saved.','ok')});
+    on('rs',()=>{
+      const old={username:S.settings.username,avatar:S.settings.avatar};
+      S.settings.username=S.settings.avatar='';save();$('#un').value=$('#av').value='';refresh();log('Identity reset.','ok');
+      toast('Identity reset',()=>{Object.assign(S.settings,old);save();if($('#un')){$('#un').value=old.username;$('#av').value=old.avatar;refresh()}})})}};
+
+P['12']={n:'Templates',
+  h:()=>`<p class="hint">Save the current input string as a reusable template.</p>${F('Template name','tn')}${B('SAVE CURRENT','go','g')}<div id="tl"></div>`,
+  i(){
+    const draw=()=>{
+      $('#tl').innerHTML=S.templates.map((t,i)=>`<div class="row"><span><b>${esc(t.name)}</b><br>${esc(t.text.slice(0,70))}</span><div class="bt"><button data-l="${i}">Load</button><button data-d="${i}">X</button></div></div>`).join('')||'<p class="hint">No templates yet.</p>';
+      $('#tl').querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>{$('#msg').value=S.templates[b.dataset.l].text;$('#msg').dispatchEvent(new Event('input'));log('Template loaded into input.','ok')});
+      $('#tl').querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>removeAt('templates',+b.dataset.d,'Template',draw))};
+    on('go',()=>{if(!v('tn')||!msgText())return log('Need a name and text.','err');S.templates.push({name:v('tn'),text:msgText()});save();draw();log('Template saved.','ok')});
+    draw()}};
+
+P['13']={n:'Rotate Across',
+  h:()=>`<p class="hint">Distributes your lines round-robin across ALL saved webhooks (see 17), using each one's own name and picture. Message 1 goes to hook 1, message 2 to hook 2, and so on.</p>${T('Messages (one per line)','lines','',' ',120)}${F('Delay (ms)','dl','','number','1500')}${B('START','go','g')}${B('STOP','st','r')}`,
+  i(){
+    on('st',()=>{stopFlag=true});
+    on('go',async()=>{
+      if(!S.hooks.length)return log('Save webhooks in 17 first.','err');
+      const ls=$('#lines').value.split('\n').map(s=>s.trim()).filter(Boolean).slice(0,100);
+      if(!ls.length)return log('No lines.','err');
+      const d=Math.max(1000,+v('dl')||1500);stopFlag=false;let n=0;
+      for(const l of ls){
+        if(stopFlag){log('Stopped.','wrn');break}
+        const h=S.hooks[n%S.hooks.length];
+        const pl=base({content:l});
+        delete pl.thread_name;delete pl.applied_tags;
+        if(h.username)pl.username=h.username;
+        if(h.avatar)pl.avatar_url=h.avatar;
+        const r=await api(h.url,{payload:pl,thread:''});
+        if(r.ok)log('→ '+h.name+': sent','ok');
+        n++;await sleep(d)}
+      log('Rotation finished.','ok')})}};
+
+P['14']={n:'Raw JSON',
+  h:()=>`<p class="hint">Full control. Paste any valid Discord webhook payload.</p>${T('Payload JSON','js','{"content":"hello","embeds":[]}','',200)}${PV}${B('SEND','go','g')}${B('PRETTIFY','pp','o')}`,
+  pv:()=>{try{return{p:JSON.parse($('#js').value||'{}')}}catch(e){return{p:{content:'⚠ Invalid JSON'}}}},
+  i(){
+    on('pp',()=>{try{$('#js').value=JSON.stringify(JSON.parse($('#js').value),null,2)}catch(e){log('Invalid JSON: '+e.message,'err')}});
+    on('go',()=>{let p;try{p=JSON.parse($('#js').value)}catch(e){return log('Invalid JSON: '+e.message,'err')}sendLog(p,0,'Raw payload sent')})}};
+
+P['15']={n:'Test Ping',
+  h:()=>`<p class="hint">Checks that the webhook is alive and measures latency.</p>${C('Also post a "RANDOMCORD ping" message','pm')}${B('TEST','go','g')}`,
+  i(){on('go',async()=>{
+    const u=needUrl();if(!u)return;
+    const t=performance.now();
+    try{
+      const r=await fetch(u);const ms=Math.round(performance.now()-t);
+      if(r.ok){log('Webhook ALIVE — '+ms+' ms','ok');if($('#pm').checked)sendLog(base({content:'🟣 RANDOMCORD ping ('+ms+' ms)'}))}
+      else log('Webhook responded '+r.status+' — invalid or deleted.','err')
+    }catch(e){log('Unreachable: '+e.message,'err')}})}};
+
+P['16']={n:'Webhook Info',
+  h:()=>`${B('FETCH INFO','go','g')}<div id="out"></div>`,
+  i(){on('go',async()=>{
+    const u=needUrl();if(!u)return;
+    const r=await api(u,{method:'GET'});if(!r.ok)return;
+    const d=r.data;
+    $('#out').innerHTML='<pre>'+esc(`Name:      ${d.name}\nID:        ${d.id}\nChannel:   ${d.channel_id}\nServer:    ${d.guild_id||'-'}\nType:      ${d.type}\nApp-owned: ${d.application_id?'yes':'no'}`)+'</pre>'+(d.avatar?`<img src="https://cdn.discordapp.com/avatars/${d.id}/${d.avatar}.png?size=96" style="border-radius:50%;margin-top:8px" alt="">`:'');
+    log('Info loaded.','ok')})}};
+
+P['17']={n:'Manage Webhooks',
+  h:()=>`<p class="hint">Save webhooks with their own name and picture. Using one switches the URL and identity together. Stored only on this device.</p>${F('Profile name','hn')}${F('Username override','hu','','text',S.settings.username)}${F('Avatar URL','ha','https://','url',S.settings.avatar)}${B('SAVE CURRENT URL','go','g')}${B('CANCEL EDIT','ce','o')}<div id="hl"></div>`,
+  i(){
+    let ed=-1;
+    const reset=()=>{ed=-1;$('#go').textContent='SAVE CURRENT URL';$('#hn').value=''};
+    const draw=()=>{$('#hl').innerHTML=S.hooks.map((h,i)=>`<div class="row ${h.url===url()?'sel':''}"><span><b>${esc(h.name)}</b><br>…${esc(h.url.slice(-14))}${h.username?' · '+esc(h.username):''}</span><div class="bt"><button data-u="${i}">Use</button><button data-e="${i}">Edit</button><button data-d="${i}">X</button></div></div>`).join('')||'<p class="hint">None saved.</p>'};
+    $('#hl').onclick=e=>{
+      const u=e.target.closest('[data-u]'),x=e.target.closest('[data-e]'),d=e.target.closest('[data-d]');
+      if(u){const h=S.hooks[+u.dataset.u];$('#url').value=h.url;refreshStatus();S.settings.username=h.username||'';S.settings.avatar=h.avatar||'';save();draw();log('Switched to '+h.name,'ok')}
+      if(x){const i=+x.dataset.e,h=S.hooks[i];ed=i;$('#hn').value=h.name;$('#hu').value=h.username||'';$('#ha').value=h.avatar||'';$('#go').textContent='UPDATE PROFILE'}
+      if(d){reset();removeAt('hooks',+d.dataset.d,'Webhook',draw)}};
+    on('ce',()=>{reset()});
+    on('go',()=>{
+      if(!v('hn'))return log('Give it a name.','err');
+      if(ed>=0){S.hooks[ed]={...S.hooks[ed],name:v('hn'),username:v('hu'),avatar:v('ha')};save();reset();draw();log('Profile updated.','ok');return}
+      const u=needUrl();if(!u)return;
+      S.hooks.push({name:v('hn'),url:u,username:v('hu'),avatar:v('ha')});save();$('#hn').value='';draw();log('Webhook saved.','ok')});
+    draw()}};
+
+P['18']={n:'Import / Export',
+  h:()=>`<p class="hint">Back up everything (webhooks, templates, drafts, settings). The export contains webhook tokens — keep it private.</p>${B('EXPORT','ex','g')}${B('COPY','cp','o')}${B('IMPORT','im','')}${T('Data','dt','','',200)}`,
+  i(){
+    on('ex',()=>{$('#dt').value=JSON.stringify(S,null,2);log('Exported to text box.','ok')});
+    on('cp',async()=>{const ok=await copyText($('#dt').value);log(ok?'Copied.':'Copy failed — select the text manually.',ok?'ok':'err')});
+    on('im',()=>{try{S=merge(JSON.parse($('#dt').value));save();applyTheme();log('Imported.','ok')}catch(e){log('Invalid data: '+e.message,'err')}})}};
+
+P['19']={n:'Link Button',
+  h:()=>`<p class="hint">Adds a clickable link button under your message (input string).</p>${F('Button label','bl','Open site')}${F('Button URL','bu','https://','url')}${PV}${B('SEND','go','g')}`,
+  pv:()=>({p:base({content:msgText(),components:[{type:1,components:[{type:2,style:5,label:v('bl')||'Button',url:v('bu')}]}]})}),
+  i(){on('go',()=>{
+    if(!v('bl')||!/^https?:\/\//.test(v('bu')))return log('Need a label and an http(s) URL.','err');
+    sendLog(base({content:msgText()||'​',components:[{type:1,components:[{type:2,style:5,label:v('bl').slice(0,80),url:v('bu')}]}]}),{query:{with_components:'true'}},'Message with button sent')})}};
+
+function hubPayload(){
+  const ls=$('#lk').value.split('\n').map(s=>s.trim()).filter(Boolean).map(l=>{const[a,...b]=l.split('|');return{label:a.trim(),url:b.join('|').trim()}}).filter(x=>/^https?:\/\//.test(x.url));
+  if(!ls.length)return null;
+  const p=base({content:msgText(),embeds:[{title:'🔗 Links',description:ls.map(x=>`**[${x.label}](${x.url})**`).join('\n'),color:0x8b5cf6}]});
+  if($('#lb').checked)p.components=[{type:1,components:ls.slice(0,5).map(x=>({type:2,style:5,label:x.label.slice(0,80),url:x.url}))}];
+  return p}
+P['20']={n:'Links Hub',
+  h:()=>`<p class="hint">One <b>label|url</b> per line. Posts a neat embed of links, optionally with buttons (first 5).</p>${T('Links','lk','Website|https://example.com','',140)}${C('Also add link buttons','lb',true)}${PV}${B('SAVE','sv','o')}${B('POST HUB','go','g')}`,
+  pv:()=>({p:hubPayload()||{content:msgText()}}),
+  i(){
+    $('#lk').value=S.links.join('\n');
+    on('sv',()=>{S.links=$('#lk').value.split('\n').map(s=>s.trim()).filter(Boolean);save();log('Links saved.','ok')});
+    on('go',()=>{const p=hubPayload();if(!p)return log('No valid links.','err');sendLog(p,{query:{with_components:'true'}},'Links hub posted')})}};
+
+P['21']={n:'History',
+  h:()=>`<p class="hint">Your last 100 messages (pinned ones stay). Resend, copy into the editor, edit or delete them on Discord from here.</p>${F('Search','hf','Filter by text or webhook')}${B('CLEAR LIST','cl','o')}<div id="hs"></div>`,
+  i(){
+    const draw=()=>{
+      const q=v('hf').toLowerCase();
+      const list=S.history.map((h,i)=>({h,i})).filter(x=>!q||(x.h.text||'').toLowerCase().includes(q)||x.h.hook.toLowerCase().includes(q)).sort((a,b)=>(b.h.pin?1:0)-(a.h.pin?1:0));
+      $('#hs').innerHTML=list.map(({h,i})=>`<div class="row col"><span>${h.pin?'★ ':''}<b>${esc(h.hook)}</b> · ${esc(new Date(h.t).toLocaleString())}<br>${esc((h.text||'(no text)').slice(0,90))}</span><div class="bt"><button data-p="${i}">${h.pin?'Unpin':'Pin'}</button><button data-r="${i}">Resend</button><button data-k="${i}">Copy to editor</button><button data-c="${i}">ID</button><button data-e="${i}">Edit</button><button data-d="${i}">Del</button></div></div>`).join('')||'<p class="hint">Nothing here.</p>'};
+    on('cl',()=>clearArr('history','History',draw));
+    $('#hf').addEventListener('input',draw);
+    $('#hs').onclick=async e=>{
+      const b=e.target.closest('button');if(!b)return;
+      const g=k=>b.dataset[k]!==undefined?+b.dataset[k]:null;
+      if(g('p')!==null){const h=S.history[g('p')];h.pin=!h.pin;save();draw()}
+      if(g('c')!==null){const h=S.history[g('c')];log(await copyText(h.id)?'Message ID copied: '+h.id:'Message ID: '+h.id,'ok')}
+      if(g('r')!==null){
+        const h=S.history[g('r')];
+        if(!h.pl)return log('File uploads cannot be resent.','err');
+        const r=await api(h.url,{payload:h.pl,thread:h.pl.thread_name?'':h.thread});
+        if(r.ok){log('Message resent.','ok');draw()}}
+      if(g('k')!==null){
+        const h=S.history[g('k')];
+        if(h.pl&&h.pl.embeds&&h.pl.embeds.length)loadIntoBuilder({content:h.pl.content||'',list:h.pl.embeds.map(embedToState)});
+        else{$('#msg').value=h.content||(h.pl&&h.pl.content)||'';$('#msg').dispatchEvent(new Event('input'));log('Copied into the input string.','ok')}}
+      if(g('e')!==null){
+        const h=S.history[g('e')];
+        const t=prompt('New text for this message',h.content||'');if(t===null)return;
+        const r=await api(h.url,{method:'PATCH',path:'/messages/'+h.id,payload:{content:t},thread:h.thread});
+        if(r.ok){h.content=t;h.text=t||h.text;if(h.pl)h.pl={...h.pl,content:t};save();draw();log('Message edited.','ok')}}
+      if(g('d')!==null){
+        const i=g('d'),h=S.history[i];
+        if(!confirm('Delete this message from Discord?'))return;
+        const r=await api(h.url,{method:'DELETE',path:'/messages/'+h.id,thread:h.thread});
+        if(r.ok||r.status===404){
+          S.history.splice(i,1);save();draw();log('Message deleted.','ok');
+          if(h.pl)toast('Message deleted',async()=>{const x=await api(h.url,{payload:h.pl,thread:h.pl.thread_name?'':h.thread});if(x.ok){log('Message reposted.','ok');if($('#hs'))draw()}})}}};
+    draw()}};
+
+const VARS=[['{date}','today'],['{time}','time'],['{datetime}','both'],['{unix}','timestamp'],['{day}','weekday'],['{month}','month'],['{year}','year'],['{random}','code'],['{randint:1-100}','number'],['{pick:red|green|blue}','random pick']];
+P['22']={n:'Variables',
+  h:()=>`<p class="hint">Tokens in your messages and embeds are filled in at send time. Tap one to insert it into the input string.</p><div class="vt">${VARS.map((x,i)=>`<button data-i="${i}">${esc(x[0])}</button>`).join('')}</div><label>Your input, resolved now</label><pre id="vr"></pre>`,
+  live(){$('#vr').textContent=vars(msgText())||'(empty)'},
+  i(){document.querySelector('.vt').onclick=e=>{const b=e.target.closest('[data-i]');if(b)insertAt(VARS[+b.dataset.i][0])}}};
+
+const ACC=['#8b5cf6','#22c55e','#3b82f6','#ec4899','#f97316','#ef4444','#06b6d4','#eab308'];
+P['23']={n:'Theme',
+  h:()=>`<p class="hint">Choose light or dark and an accent color. Saved on this device.</p><label>Mode</label>${B('DARK','m_dark','o')}${B('LIGHT','m_light','o')}${B('AUTO','m_auto','o')}<label>Accent</label><div class="sw" id="sw"></div><label>Custom accent</label><input type="color" id="ac" value="${S.settings.accent}">${B('RESET','rs','o')}`,
+  i(){
+    const draw=()=>{
+      ['dark','light','auto'].forEach(m=>$('#m_'+m).classList.toggle('on',S.settings.theme===m));
+      $('#sw').innerHTML=ACC.map(c=>`<button data-c="${c}" style="background:${c}" class="${c===S.settings.accent?'sel':''}"></button>`).join('');
+      $('#ac').value=S.settings.accent};
+    const set=(k,val)=>{S.settings[k]=val;save();applyTheme();draw()};
+    ['dark','light','auto'].forEach(m=>on('m_'+m,()=>set('theme',m)));
+    $('#sw').onclick=e=>{const b=e.target.closest('[data-c]');if(b)set('accent',b.dataset.c)};
+    $('#ac').oninput=e=>set('accent',e.target.value);
+    on('rs',()=>{S.settings.theme='dark';set('accent','#8b5cf6')});
+    draw()}};
+
+P['24']={n:'Embed Gallery',sel:0,
+  h:()=>`<p class="hint">Pick a ready-made layout, check the preview, then open it in the builder to edit.</p><div id="gl"></div>${PV}${B('OPEN IN BUILDER','go','g')}`,
+  pv(){const t=TPL[this.sel];return{p:base({content:t.content||'',embeds:t.embeds.map(eEmbed).filter(Boolean)})}},
+  i(){
+    const draw=()=>{$('#gl').innerHTML=TPL.map((t,i)=>`<div class="row ${i===this.sel?'sel':''}" data-i="${i}"><span><b>${esc(t.name)}</b><br>${esc((t.embeds[0].title||'').slice(0,40))}</span></div>`).join('')};
+    $('#gl').onclick=e=>{const r=e.target.closest('[data-i]');if(!r)return;this.sel=+r.dataset.i;draw();refresh()};
+    on('go',()=>{const t=TPL[this.sel];loadIntoBuilder({content:t.content||msgText(),list:t.embeds.map(x=>({...x,fields:(x.fields||[]).map(f=>({...f}))}))})});
+    draw()}};
+
+P['25']={n:'Health Check',
+  h:()=>`<p class="hint">Pings your saved webhooks and shows which are alive, deleted or unreachable.</p>${B('CHECK ALL SAVED','go','g')}${B('CHECK CURRENT URL','gc','o')}<div id="hh"></div>`,
+  i(){
+    let rows=[];
+    const draw=()=>{
+      $('#hh').innerHTML=rows.map((r,i)=>`<div class="row"><span><span class="dot ${r.cls}"></span><b>${esc(r.name)}</b><br>${esc(r.msg)}</span>${r.url?`<div class="bt"><button data-u="${i}">Use</button></div>`:''}</div>`).join('')};
+    async function check(name,u){
+      const t=performance.now();
+      try{
+        const r=await fetch(u);const ms=Math.round(performance.now()-t);
+        if(r.ok){const d=await r.json();return{name,url:u,cls:'g',msg:'Alive · '+ms+' ms · "'+d.name+'" · channel '+d.channel_id}}
+        if(r.status===404)return{name,url:u,cls:'r',msg:'Deleted or unknown webhook'};
+        if(r.status===401)return{name,url:u,cls:'r',msg:'Invalid token'};
+        return{name,url:u,cls:'a',msg:'Unexpected response: HTTP '+r.status}
+      }catch(e){return{name,url:u,cls:'a',msg:'Unreachable: '+e.message}}}
+    on('go',async()=>{
+      if(!S.hooks.length)return log('No saved webhooks. Add some in 17.','err');
+      rows=S.hooks.map(h=>({name:h.name,url:h.url,cls:'',msg:'checking…'}));draw();
+      for(let i=0;i<S.hooks.length;i++){rows[i]=await check(S.hooks[i].name,S.hooks[i].url);draw();await sleep(150)}
+      const ok=rows.filter(r=>r.cls==='g').length;log('Health check: '+ok+'/'+rows.length+' alive.',ok===rows.length?'ok':'wrn')});
+    on('gc',async()=>{
+      const u=needUrl();if(!u)return;
+      rows=[{name:'Current URL',url:'',cls:'',msg:'checking…'}];draw();
+      rows=[await check('Current URL',u)];rows[0].url='';draw()});
+    $('#hh').onclick=e=>{const b=e.target.closest('[data-u]');if(!b)return;const r=rows[+b.dataset.u];$('#url').value=r.url;refreshStatus();log('Switched to '+r.name,'ok')}}};
+
+const NUM=['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣','🔟'];
+function pollPayload(){
+  const o=$('#po').value.split('\n').map(s=>s.trim()).filter(Boolean).slice(0,10);
+  const e={title:'📊 '+(v('pq')||'Your question')};
+  const c=intColor($('#pcol').value);if(c!==undefined)e.color=c;
+  let d=o.map((x,i)=>NUM[i]+'  '+x).join('\n\n');
+  const at=$('#pc').value?Math.floor(new Date($('#pc').value).getTime()/1000):0;
+  if(at)d+=(d?'\n\n':'')+'⏰ Closes <t:'+at+':R>';
+  if(d)e.description=d;
+  e.footer={text:'React with the number of your choice'+($('#pm').checked?' · you can pick more than one':' · pick one')};
+  return{p:base({content:msgText(),embeds:[e]}),n:o.length}}
+P['26']={n:'Poll Builder',
+  h:()=>`<p class="hint">Builds a numbered poll embed (2–10 options). Webhooks can't add reactions, so after it posts, tap each number once under the message so others can click it.</p>${F('Question','pq','Which one?')}${T('Options (one per line)','po','Pizza\nTacos\nSushi','',120)}${F('Closes at (optional)','pc','','datetime-local')}<label>Color</label><input type="color" id="pcol" value="${S.settings.accent}">${C('Allow more than one choice','pm')}${PV}${B('POST POLL','go','g')}`,
+  pv:()=>({p:pollPayload().p}),
+  i(){on('go',()=>{
+    const r=pollPayload();
+    if(!v('pq'))return log('Add a question.','err');
+    if(r.n<2)return log('Add at least 2 options.','err');
+    sendLog(r.p,0,'Poll posted')})}};
+
+P['27']={n:'Message Splitter',
+  h:()=>`<p class="hint">Splits the input string into chunks that fit Discord's limit. It breaks at line ends where it can and keeps code blocks intact.</p>${F('Max length per message','sm','','number','2000')}${F('Delay between messages (ms)','sd','','number','1500')}${C('Number the parts (1/3)','sn',true)}<div id="sl"></div>${PV}${B('SEND ALL','go','g')}${B('STOP','st','r')}`,
+  chunks(){return splitText(msgText(),Math.min(2000,Math.max(200,+v('sm')||2000)),$('#sn').checked)},
+  live(){
+    const c=this.chunks();
+    $('#sl').innerHTML='<p class="hint">'+(msgText().trim()?c.length+' message'+(c.length===1?'':'s')+': '+c.map(x=>x.length).join(', ')+' characters':'Type or paste text in the input string above.')+'</p>'},
+  pv(){const c=this.chunks();return{p:base({content:msgText().trim()?c[0]:''})}},
+  i(){
+    on('st',()=>{stopFlag=true});
+    on('go',async()=>{
+      if(!msgText().trim())return log('Nothing to split.','err');
+      const c=this.chunks();stopFlag=false;let n=0;
+      for(const part of c){
+        if(stopFlag){log('Stopped.','wrn');break}
+        const r=await send(base({content:part}));if(!r.ok&&!r.queued)break;
+        n++;log('Sent part '+n+'/'+c.length,'ok');await sleep(Math.max(1000,+v('sd')||1500))}
+      log('Splitter done: '+n+' sent.','ok')})}};
+
+P['28']={n:'Link Checker',
+  h:()=>`<p class="hint">Checks that image and web links load before you send. Some sites block this check, so a warning is not always a problem.</p>${T('URLs (one per line)','uls','https://example.com/image.png','',120)}${B('SCAN MY DRAFTS','sc','o')}${B('CHECK','go','g')}<div id="ur"></div>`,
+  i(){
+    on('sc',()=>{
+      const set=new Set();
+      const add=t=>(t||'').match(/https?:\/\/[^\s<>)\]"']+/g)?.forEach(x=>set.add(x));
+      add(msgText());
+      ((S.draft.em&&S.draft.em.list)||[]).forEach(s=>[s.eurl,s.aicon,s.ficon,s.image,s.thumb,s.desc].forEach(add));
+      S.links.forEach(add);add(S.settings.avatar);
+      $('#uls').value=[...set].join('\n');log('Found '+set.size+' link(s).','ok')});
+    on('go',async()=>{
+      const us=[...new Set($('#uls').value.split('\n').map(s=>s.trim()).filter(Boolean))].slice(0,30);
+      if(!us.length)return log('No URLs.','err');
+      $('#ur').innerHTML='';
+      for(const u of us){
+        const row=document.createElement('div');row.className='row';
+        row.innerHTML='<span><span class="dot"></span>'+esc(u.slice(0,70))+'<br>checking…</span>';
+        $('#ur').appendChild(row);
+        const r=await checkUrl(u);
+        row.innerHTML='<span><span class="dot '+r.cls+'"></span>'+esc(u.slice(0,70))+'<br>'+esc(r.msg)+'</span>'}})}};
+
+P['29']={n:'Outbox',
+  h:()=>`<p class="hint">Messages sent while you were offline wait here and go out automatically when you're back online. File uploads can't be queued.</p><div class="hint" id="ob_s"></div>${B('SEND NOW','go','g')}${B('CLEAR','cl','o')}<div id="ol"></div>`,
+  live(){
+    $('#ob_s').textContent=(navigator.onLine===false?'You are offline. ':'You are online. ')+S.outbox.length+' waiting.';
+    $('#ol').innerHTML=S.outbox.map((q,i)=>`<div class="row"><span>${esc(new Date(q.t).toLocaleString())}<br>${esc((q.payload.content||(q.payload.embeds?'[embed]':'')).slice(0,80))}</span><button data-d="${i}">X</button></div>`).join('')||'<p class="hint">Outbox is empty.</p>'},
+  i(){
+    on('go',async()=>{if(navigator.onLine===false)return log('Still offline.','wrn');await flushOutbox();this.live()});
+    on('cl',()=>clearArr('outbox','Outbox',()=>this.live()));
+    $('#ol').onclick=e=>{const b=e.target.closest('[data-d]');if(b)removeAt('outbox',+b.dataset.d,'Queued message',()=>this.live())}}};
+
+P['00']={n:'System Quit',
+  h:()=>`<p class="hint">Closes the session and clears the on-screen webhook URL. Saved data stays on this device.</p>${B('QUIT','go','r')}`,
+  i(){on('go',()=>{$('#url').value='';refreshStatus();$('#lock').classList.add('on')})}};
+
+const PLG=[];
+const slug=s=>s.toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
+const pf=s=>{const a=s.split('|'),k=a[0],t=k[0]==='*'?'area':k[0]==='#'?'color':'text';return{k:k.replace(/^[*#]/,''),label:a[1],ph:t==='color'?'':(a[2]||''),type:t,def:t==='color'?(a[2]||'#8b5cf6'):(a[3]||'')}};
+const add=(cat,name,desc,fields,content,embed)=>PLG.push({id:slug(name),cat,name,desc,fields:fields.map(pf),content:content||'',embed:embed||null});
+add('ann','Server Announcement','Headline with details and date',['t|Headline|Big news','*d|Details|What is happening','#c|Color|#8b5cf6'],'@everyone',{title:'{{t}}',description:'{{d}}',color:'{{c}}',footer:'{date}'});
+add('ann','Maintenance Notice','Planned downtime heads-up',['w|When|Tonight 10 PM UTC','l|Duration|About 30 minutes','*r|Reason|Database upgrade'],'',{title:'Scheduled Maintenance',description:'{{r}}',color:'#ffc857',fields:[['When','{{w}}',1],['Expected length','{{l}}',1]],footer:'Thanks for your patience'});
+add('ann','Patch Notes','Version number with change list',['v|Version|1.4.2','*n|Changes|- Fixed login bug\n- Faster loading'],'',{title:'Patch {{v}}',description:'{{n}}',color:'#22c55e',footer:'{date}'});
+add('ann','New Feature','Introduce something new',['n|Feature|Dark mode','*d|What it does|Switch themes from settings','i|Image URL|https://'],'',{title:'New: {{n}}',description:'{{d}}',color:'#3b82f6',image:'{{i}}'});
+add('ann','Rules Update','Tell members the rules changed',['*r|What changed|Rule 4 now covers links'],'@everyone',{title:'Rules Updated',description:'{{r}}',color:'#ef4444',footer:'Effective immediately'});
+add('ann','Welcome Message','Greet people joining',['s|Server name|My Server','*g|Getting started|Read the rules then say hi'],'',{title:'Welcome to {{s}}',description:'{{g}}',color:'#22ff88'});
+add('ann','Server Milestone','Celebrate a member count or goal',['m|Milestone|1,000 members','*t|Thank you note|You made this happen'],'',{title:'We reached {{m}}',description:'{{t}}',color:'#f59e0b',footer:'{date}'});
+add('ann','Staff Announcement','Message from the team',['f|From|The Staff Team','*b|Message|Here is an update'],'',{author:'{{f}}',description:'{{b}}',color:'#8b5cf6'});
+add('ann','Changelog Entry','One line per change',['v|Version|2.0','*a|Added|- New tool','*x|Fixed|- Crash on start'],'',{title:'Changelog {{v}}',color:'#06b6d4',fields:[['Added','{{a}}',0],['Fixed','{{x}}',0]]});
+add('ann','Important Notice','Red alert style message',['*b|Message|Please read carefully'],'@here',{title:'Important',description:'{{b}}',color:'#ef4444'});
+add('ann','Weekly Recap','Highlights from the week',['*h|Highlights|- 40 new members','*u|Coming up|- Game night Friday'],'',{title:'Weekly Recap',color:'#8b5cf6',fields:[['This week','{{h}}',0],['Next week','{{u}}',0]],footer:'{date}'});
+add('ann','Link Announcement','Announcement with a button-style link',['t|Title|Read the post','*d|Summary|Short summary','u|Link|https://example.com'],'',{title:'{{t}}',url:'{{u}}',description:'{{d}}',color:'#3b82f6'});
+add('com','Introduce Yourself','Ask newcomers to say hi',['*q|Prompts|- Name\n- Hobbies\n- Favourite game'],'',{title:'Introduce Yourself',description:'{{q}}',color:'#ec4899'});
+add('com','Question of the Day','Daily conversation starter',['q|Question|What are you playing this week?'],'',{title:'Question of the Day',description:'{{q}}',color:'#06b6d4',footer:'{date}'});
+add('com','Member Spotlight','Highlight a member',['n|Member|Name','*w|Why|Always helping out','i|Photo URL|https://'],'',{title:'Spotlight: {{n}}',description:'{{w}}',color:'#f59e0b',thumb:'{{i}}'});
+add('com','Suggestion Box','Collect ideas',['t|Topic|Suggestion','*d|Idea|Describe it'],'',{title:'Suggestion: {{t}}',description:'{{d}}',color:'#22c55e',footer:'React to vote'});
+add('com','Feedback Request','Ask for opinions',['*q|What do you want to know|How can we improve?'],'',{title:'We want your feedback',description:'{{q}}',color:'#3b82f6'});
+add('com','Rules Reminder','Short friendly reminder',['*r|Rules|1. Be kind\n2. No spam'],'',{title:'Friendly Reminder',description:'{{r}}',color:'#ffc857'});
+add('com','Role Info','Explain a role',['r|Role|Moderator','*d|What it means|Keeps the server safe','*g|How to get it|Apply in tickets'],'',{title:'Role: {{r}}',color:'#8b5cf6',fields:[['About','{{d}}',0],['How to get it','{{g}}',0]]});
+add('com','Channel Guide','Explain a channel',['c|Channel|#general','*d|Purpose|Chat about anything'],'',{title:'{{c}}',description:'{{d}}',color:'#64748b'});
+add('com','FAQ Entry','One question and answer',['q|Question|How do I join?','*a|Answer|Click the invite'],'',{title:'{{q}}',description:'{{a}}',color:'#06b6d4'});
+add('com','Thank You Message','Thank someone publicly',['n|Name|Someone','*m|Reason|Thanks for your help'],'',{title:'Thank you {{n}}',description:'{{m}}',color:'#ec4899'});
+add('com','Community Rules','Full rule list',['*r|Rules|1. Respect everyone\n2. No spam\n3. Stay on topic'],'',{title:'Community Rules',description:'{{r}}',color:'#ef4444',footer:'Breaking rules may lead to a ban'});
+add('com','Boost Thanks','Thank boosters',['n|Booster|Name'],'',{title:'Server Boosted',description:'Thank you {{n}} for boosting.',color:'#f47fff'});
+add('com','Poll Prompt','Simple vote with reactions',['q|Question|Pizza or tacos?','a|Option A|Pizza','b|Option B|Tacos'],'',{title:'{{q}}',description:'A  {{a}}\nB  {{b}}',color:'#3b82f6',footer:'React to vote'});
+add('gam','Game Night','Invite everyone to play',['g|Game|Minecraft','w|When|Friday 8 PM','*d|Details|Join voice'],'@everyone',{title:'Game Night: {{g}}',description:'{{d}}',color:'#8b5cf6',fields:[['When','{{w}}',1],['Game','{{g}}',1]]});
+add('gam','LFG Post','Looking for group',['g|Game|Valorant','r|Rank|Gold','n|Players needed|2'],'',{title:'Looking for Group',color:'#22c55e',fields:[['Game','{{g}}',1],['Rank','{{r}}',1],['Need','{{n}}',1]]});
+add('gam','Tournament Bracket','Rounds and matchups',['t|Tournament|Winter Cup','*b|Matchups|A vs B\nC vs D'],'',{title:'{{t}}',description:'{{b}}',color:'#f59e0b'});
+add('gam','Match Result','Score summary',['a|Team A|Red','b|Team B|Blue','s|Score|3 - 1'],'',{title:'Final Score',description:'{{a}}  {{s}}  {{b}}',color:'#22c55e',footer:'{date}'});
+add('gam','Game Release','New game or update out now',['g|Game|Title','*d|Blurb|Out now','u|Link|https://'],'',{title:'{{g}} is out',url:'{{u}}',description:'{{d}}',color:'#3b82f6'});
+add('gam','Clan Recruitment','Recruit players',['c|Clan|Name','*r|Requirements|- Active\n- 16+','u|Apply link|https://'],'',{title:'{{c}} is recruiting',url:'{{u}}',description:'{{r}}',color:'#ef4444'});
+add('gam','Game Server Status','Online or offline',['s|Server|Survival','t|Status|Online','p|Players|12 / 50'],'',{title:'{{s}}',color:'#22c55e',fields:[['Status','{{t}}',1],['Players','{{p}}',1]]});
+add('gam','Leaderboard','Top players list',['*l|Entries|1. Ana - 900\n2. Ben - 850\n3. Cy - 800'],'',{title:'Leaderboard',description:'{{l}}',color:'#f59e0b',footer:'{date}'});
+add('gam','Scrim Schedule','Practice matches',['*s|Schedule|Mon 7 PM\nWed 7 PM'],'',{title:'Scrims This Week',description:'{{s}}',color:'#8b5cf6'});
+add('gam','Achievement Unlocked','Show off a win',['n|Name|Player','a|Achievement|First win'],'',{title:'Achievement Unlocked',description:'{{n}} earned {{a}}',color:'#ffc857'});
+add('gam','Patch Alert','Game update notice',['g|Game|Title','v|Version|1.2','*c|Changes|- Balance changes'],'',{title:'{{g}} update {{v}}',description:'{{c}}',color:'#06b6d4'});
+add('dev','Deploy Success','Deployment passed',['a|App|my-app','e|Environment|production','v|Version|1.0.0'],'',{title:'Deploy succeeded',color:'#22c55e',fields:[['App','{{a}}',1],['Env','{{e}}',1],['Version','{{v}}',1]],footer:'{datetime}'});
+add('dev','Deploy Failed','Deployment failed',['a|App|my-app','*e|Error|Build step failed'],'',{title:'Deploy failed',description:'{{e}}',color:'#ef4444',fields:[['App','{{a}}',1]],footer:'{datetime}'});
+add('dev','Build Status','CI result',['r|Repo|owner/repo','b|Branch|main','s|Status|Passing'],'',{title:'Build {{s}}',color:'#3b82f6',fields:[['Repo','{{r}}',1],['Branch','{{b}}',1]]});
+add('dev','Release Notes','Version and notes',['v|Version|v1.0.0','*n|Notes|- First release','u|Link|https://'],'',{title:'Release {{v}}',url:'{{u}}',description:'{{n}}',color:'#8b5cf6'});
+add('dev','Bug Report','Structured bug report',['t|Title|Crash on save','*s|Steps|1. Open\n2. Save','*x|Expected|Saves file'],'',{title:'Bug: {{t}}',color:'#ef4444',fields:[['Steps','{{s}}',0],['Expected','{{x}}',0]]});
+add('dev','Issue Opened','New issue notice',['n|Number|42','t|Title|Fix typo','a|Author|dev'],'',{title:'Issue #{{n}}: {{t}}',color:'#f59e0b',author:'{{a}}'});
+add('dev','Pull Request','PR opened or merged',['n|Number|17','t|Title|Add feature','a|Author|dev','s|State|Opened'],'',{title:'PR #{{n}} {{s}}',description:'{{t}}',color:'#8b5cf6',author:'{{a}}'});
+add('dev','Commit Push','Commit summary',['b|Branch|main','a|Author|dev','*m|Message|Fix bug'],'',{title:'New commit on {{b}}',description:'{{m}}',color:'#64748b',author:'{{a}}'});
+add('dev','Uptime Alert','Service down or up',['s|Service|API','t|State|Down','*d|Details|No response in 60s'],'',{title:'{{s}} is {{t}}',description:'{{d}}',color:'#ef4444',footer:'{datetime}'});
+add('dev','Server Metrics','CPU, memory, disk',['c|CPU|42%','m|Memory|61%','d|Disk|73%'],'',{title:'Server Metrics',color:'#06b6d4',fields:[['CPU','{{c}}',1],['Memory','{{m}}',1],['Disk','{{d}}',1]],footer:'{datetime}'});
+add('dev','Error Log','Error with context',['e|Error|TypeError','*s|Stack|at main.js:10','w|Where|checkout'],'',{title:'{{e}}',description:'```\n{{s}}\n```',color:'#ef4444',fields:[['Where','{{w}}',1]]});
+add('dev','API Status','Endpoint health list',['*l|Endpoints|GET /users 200\nPOST /login 200'],'',{title:'API Status',description:'```\n{{l}}\n```',color:'#22c55e',footer:'{datetime}'});
+add('dev','Code Snippet','Share code',['l|Language|js','*c|Code|console.log(1)'],'```{{l}}\n{{c}}\n```');
+add('dev','Cron Report','Scheduled job finished',['j|Job|backup','r|Result|OK','t|Took|12s'],'',{title:'Job {{j}}',color:'#3b82f6',fields:[['Result','{{r}}',1],['Duration','{{t}}',1]],footer:'{datetime}'});
+add('mod','Warning Notice','Warn a member',['u|Member|User','*r|Reason|Spam','m|Moderator|Mod'],'',{title:'Warning',color:'#ffc857',fields:[['Member','{{u}}',1],['By','{{m}}',1],['Reason','{{r}}',0]],footer:'{datetime}'});
+add('mod','Ban Log','Record a ban',['u|Member|User','*r|Reason|Raiding','m|Moderator|Mod'],'',{title:'Member Banned',color:'#ef4444',fields:[['Member','{{u}}',1],['By','{{m}}',1],['Reason','{{r}}',0]],footer:'{datetime}'});
+add('mod','Mute Log','Record a timeout',['u|Member|User','d|Duration|1 hour','*r|Reason|Arguing'],'',{title:'Member Muted',color:'#f59e0b',fields:[['Member','{{u}}',1],['Length','{{d}}',1],['Reason','{{r}}',0]]});
+add('mod','Kick Log','Record a kick',['u|Member|User','*r|Reason|Inactive alt'],'',{title:'Member Kicked',color:'#f97316',fields:[['Member','{{u}}',1],['Reason','{{r}}',0]]});
+add('mod','Appeal Info','How to appeal',['u|Appeal link|https://','*s|Steps|Fill in the form'],'',{title:'Ban Appeals',url:'{{u}}',description:'{{s}}',color:'#3b82f6'});
+add('mod','Report Received','Moderation ticket',['i|Report ID|1001','u|Reported|User','*d|Details|Harassment'],'',{title:'Report #{{i}}',color:'#ef4444',fields:[['Reported','{{u}}',1],['Details','{{d}}',0]]});
+add('mod','Verification Message','Tell users how to verify',['*s|Steps|Read rules and click the button'],'',{title:'Verify to Join',description:'{{s}}',color:'#22ff88'});
+add('mod','Audit Note','Internal note',['u|Member|User','*n|Note|Spoke to them'],'',{title:'Staff Note',color:'#64748b',fields:[['Member','{{u}}',1],['Note','{{n}}',0]],footer:'{datetime}'});
+add('mod','Slowmode Notice','Slowmode enabled',['s|Seconds|10','*r|Reason|Busy chat'],'',{title:'Slowmode On',description:'Messages are limited to one per {{s}} seconds.\n{{r}}',color:'#ffc857'});
+add('mod','Raid Alert','Lockdown notice',['*d|Details|Many new accounts joining'],'@here',{title:'Raid Alert',description:'{{d}}',color:'#ef4444'});
+add('mod','Channel Locked','Lock or unlock',['c|Channel|#general','s|State|Locked','*r|Reason|Cleanup'],'',{title:'{{c}} {{s}}',description:'{{r}}',color:'#64748b'});
+add('evt','Event Invite','Invite to an event',['n|Event|Movie night','w|When|Saturday 9 PM','p|Where|Voice 1','*d|Details|Bring snacks'],'@everyone',{title:'{{n}}',description:'{{d}}',color:'#ec4899',fields:[['When','{{w}}',1],['Where','{{p}}',1]]});
+add('evt','Event Reminder','Starting soon',['n|Event|Movie night','t|Starts in|30 minutes'],'@here',{title:'{{n}} starts in {{t}}',color:'#f59e0b'});
+add('evt','Event Cancelled','Cancel notice',['n|Event|Movie night','*r|Reason|Not enough people'],'',{title:'{{n}} cancelled',description:'{{r}}',color:'#ef4444'});
+add('evt','Event Recap','After the event',['n|Event|Movie night','*h|Highlights|Great turnout'],'',{title:'Recap: {{n}}',description:'{{h}}',color:'#22c55e'});
+add('evt','AMA Session','Ask me anything',['g|Guest|Name','w|When|Sunday 6 PM','*t|Topic|Game design'],'',{title:'AMA with {{g}}',description:'{{t}}',color:'#8b5cf6',fields:[['When','{{w}}',1]]});
+add('evt','Livestream Starting','Going live',['t|Title|Stream title','u|Link|https://'],'@everyone',{title:'{{t}}',url:'{{u}}',description:'Live now',color:'#9146ff'});
+add('evt','Stage Event','Voice stage',['t|Topic|Open mic','w|When|Friday 7 PM'],'',{title:'Stage: {{t}}',description:'Starts {{w}}',color:'#06b6d4'});
+add('evt','Meetup Plan','Real life meetup',['p|Place|Central Park','w|When|Sunday noon','*n|Notes|Bring water'],'',{title:'Meetup',description:'{{n}}',color:'#22c55e',fields:[['Where','{{p}}',1],['When','{{w}}',1]]});
+add('evt','Contest Announcement','Contest rules',['n|Contest|Art contest','*r|Rules|One entry each','p|Prize|Nitro'],'',{title:'{{n}}',description:'{{r}}',color:'#f59e0b',fields:[['Prize','{{p}}',1]]});
+add('evt','Countdown','Date based countdown',['n|Event|Launch','u|Unix timestamp|1893456000'],'',{title:'{{n}}',description:'<t:{{u}}:R>  (<t:{{u}}:F>)',color:'#3b82f6'});
+add('pro','Giveaway','Run a giveaway',['p|Prize|Gift card','e|Ends|Friday','*r|How to enter|React below'],'@everyone',{title:'Giveaway: {{p}}',description:'{{r}}',color:'#f59e0b',fields:[['Ends','{{e}}',1]]});
+add('pro','Giveaway Winner','Announce winners',['w|Winner|User','p|Prize|Gift card'],'',{title:'We have a winner',description:'Congratulations {{w}}. You won {{p}}.',color:'#22c55e'});
+add('pro','Sale Announcement','Limited time sale',['p|Percent off|30%','e|Ends|Sunday','u|Shop link|https://'],'@everyone',{title:'{{p}} off sale',url:'{{u}}',description:'Ends {{e}}',color:'#ef4444'});
+add('pro','Discount Code','Share a coupon',['c|Code|SAVE20','d|Discount|20%'],'',{title:'Your code',description:'Use **{{c}}** for {{d}} off.',color:'#22c55e'});
+add('pro','Product Launch','New product',['n|Product|Name','*d|Description|Why it is great','u|Link|https://','i|Image URL|https://'],'',{title:'Introducing {{n}}',url:'{{u}}',description:'{{d}}',color:'#8b5cf6',image:'{{i}}'});
+add('pro','Partner Spotlight','Promote a partner',['n|Partner|Name','*d|About|What they do','u|Link|https://'],'',{title:'Partner: {{n}}',url:'{{u}}',description:'{{d}}',color:'#06b6d4'});
+add('pro','Affiliate Link','Deal with a link',['n|Item|Headphones','u|Link|https://'],'',{title:'{{n}}',url:'{{u}}',description:'Get it here',color:'#f59e0b'});
+add('pro','Newsletter','Issue summary',['n|Issue|#12','*s|Summary|Top stories','u|Link|https://'],'',{title:'Newsletter {{n}}',url:'{{u}}',description:'{{s}}',color:'#3b82f6'});
+add('pro','Sponsor Thanks','Thank a sponsor',['n|Sponsor|Name'],'',{title:'Thank you {{n}}',description:'This server is supported by {{n}}.',color:'#ec4899'});
+add('pro','Job Opening','Hiring post',['r|Role|Moderator','*q|Requirements|Active daily','u|Apply link|https://'],'',{title:'Hiring: {{r}}',url:'{{u}}',description:'{{q}}',color:'#22c55e'});
+add('soc','YouTube Upload','New video',['t|Title|Video title','u|Link|https://youtube.com/','i|Thumbnail URL|https://'],'New video is out',{title:'{{t}}',url:'{{u}}',color:'#ff0000',image:'{{i}}'});
+add('soc','Twitch Live','Going live on Twitch',['n|Channel|name','g|Game|Game','u|Link|https://twitch.tv/'],'',{title:'{{n}} is live',url:'{{u}}',description:'Playing {{g}}',color:'#9146ff'});
+add('soc','Tweet Share','Share a post',['a|Account|@name','*t|Text|Post text','u|Link|https://'],'',{author:'{{a}}',url:'{{u}}',description:'{{t}}',color:'#1d9bf0'});
+add('soc','Instagram Post','Photo share',['a|Account|@name','*c|Caption|Caption','i|Image URL|https://','u|Link|https://'],'',{author:'{{a}}',url:'{{u}}',description:'{{c}}',color:'#e1306c',image:'{{i}}'});
+add('soc','TikTok Post','Short video share',['a|Account|@name','*c|Caption|Caption','u|Link|https://'],'',{author:'{{a}}',url:'{{u}}',description:'{{c}}',color:'#25f4ee'});
+add('soc','Podcast Episode','New episode',['n|Show|Name','e|Episode|Title','u|Link|https://'],'',{title:'{{n}}: {{e}}',url:'{{u}}',color:'#8b5cf6'});
+add('soc','Blog Post','New article',['t|Title|Post title','*s|Summary|Short summary','u|Link|https://'],'',{title:'{{t}}',url:'{{u}}',description:'{{s}}',color:'#3b82f6'});
+add('soc','Music Share','Share a song',['s|Song|Title','a|Artist|Name','u|Link|https://'],'',{title:'{{s}}',url:'{{u}}',description:'by {{a}}',color:'#1db954'});
+add('soc','Stream Schedule','Weekly schedule',['*s|Schedule|Mon 7 PM\nThu 7 PM'],'',{title:'Stream Schedule',description:'{{s}}',color:'#9146ff'});
+add('soc','Follow Links','All social links',['*l|Links|[YouTube](https://youtube.com)\n[Twitter](https://twitter.com)'],'',{title:'Follow Us',description:'{{l}}',color:'#06b6d4'});
+add('fun','Quote of the Day','Inspire the chat',['q|Quote|Keep going','a|Author|Someone'],'',{title:'Quote of the Day',description:'"{{q}}"\n  {{a}}',color:'#f59e0b'});
+add('fun','Dad Joke','Terrible jokes',['s|Setup|Why did the chicken cross the road?','p|Punchline|To get to the other side'],'',{title:'{{s}}',description:'||{{p}}||',color:'#ffc857'});
+add('fun','Fun Fact','Did you know',['*f|Fact|Honey never spoils'],'',{title:'Fun Fact',description:'{{f}}',color:'#06b6d4'});
+add('fun','Would You Rather','Pick one',['a|Option A|Fly','b|Option B|Be invisible'],'',{title:'Would You Rather',description:'A  {{a}}\nB  {{b}}',color:'#ec4899'});
+add('fun','Trivia Question','Question with hidden answer',['q|Question|Capital of France?','a|Answer|Paris'],'',{title:'Trivia',description:'{{q}}\n\n||{{a}}||',color:'#3b82f6'});
+add('fun','This or That','Quick choice',['a|This|Cats','b|That|Dogs'],'',{title:'This or That',description:'{{a}}  or  {{b}}',color:'#22c55e'});
+add('fun','Meme Caption','Caption with image',['t|Caption|When it works first try','i|Image URL|https://'],'',{description:'{{t}}',color:'#8b5cf6',image:'{{i}}'});
+add('fun','Compliment','Spread kindness',['n|Name|Someone','*m|Message|You are great'],'',{title:'For {{n}}',description:'{{m}}',color:'#ec4899'});
+add('fun','Random Pick','Choose from three options',['a|Option 1|pizza','b|Option 2|tacos','c|Option 3|sushi'],'I pick {pick:{{a}}|{{b}}|{{c}}}');
+add('fun','Dice Roll','Roll a random number',['l|Lowest|1|1','h|Highest|20|20'],'Rolled {randint:{{l}}-{{h}}}');
+add('fun','Magic 8 Ball','Ask the ball',['q|Question|Will it work?'],'',{title:'{{q}}',description:'{pick:Yes|No|Maybe|Ask again later|Definitely|Not likely}',color:'#1e1b4b'});
+add('fun','Coin Flip','Heads or tails',['q|Question|Who goes first?'],'',{title:'{{q}}',description:'{pick:Heads|Tails}',color:'#ffc857'});
+add('utl','Simple Message','Plain text message',['*m|Message|Hello'],'{{m}}');
+add('utl','Reminder','Reminder card',['t|What|Submit report','w|When|Tomorrow'],'',{title:'Reminder',description:'{{t}}',color:'#ffc857',fields:[['When','{{w}}',1]]});
+add('utl','To-Do List','Checklist',['*l|Items|- [ ] First\n- [ ] Second'],'',{title:'To-Do',description:'{{l}}',color:'#22c55e'});
+add('utl','Meeting Notes','Notes with actions',['t|Topic|Weekly sync','*n|Notes|Discussed plans','*a|Actions|- Send report'],'',{title:'Meeting: {{t}}',color:'#3b82f6',fields:[['Notes','{{n}}',0],['Actions','{{a}}',0]],footer:'{date}'});
+add('utl','Daily Standup','Yesterday, today, blockers',['*y|Yesterday|Finished task','*t|Today|Start new task','*b|Blockers|None'],'',{title:'Standup {date}',color:'#06b6d4',fields:[['Yesterday','{{y}}',0],['Today','{{t}}',0],['Blockers','{{b}}',0]]});
+add('utl','Link Share','Link with note',['t|Title|Useful page','u|Link|https://','*n|Note|Worth a read'],'',{title:'{{t}}',url:'{{u}}',description:'{{n}}',color:'#3b82f6'});
+add('utl','Code Block','Wrap text as code',['*c|Text|anything'],'```\n{{c}}\n```');
+add('utl','Status Update','Project status',['p|Project|Name','s|Status|On track','*n|Notes|Details'],'',{title:'{{p}}',description:'{{n}}',color:'#22c55e',fields:[['Status','{{s}}',1]]});
+add('utl','Shopping List','Things to buy',['*l|Items|- Milk\n- Bread'],'',{title:'Shopping List',description:'{{l}}',color:'#f59e0b'});
+add('utl','Schedule Table','Timetable in code block',['*s|Rows|09:00 Math\n10:00 Art'],'',{title:'Schedule',description:'```\n{{s}}\n```',color:'#8b5cf6'});
+add('utl','Contact Card','Name and contact details',['n|Name|Name','e|Email|me@example.com','p|Phone|555 0100'],'',{title:'{{n}}',color:'#64748b',fields:[['Email','{{e}}',1],['Phone','{{p}}',1]]});
+add('utl','Spoiler Message','Hide text behind spoiler',['*m|Message|Secret'],'||{{m}}||');
+add('utl','Quote Reply','Quote a message',['*q|Quote|Original text','*r|Reply|Response'],'> {{q}}\n{{r}}');
+add('utl','Timestamp Message','Discord timestamp',['u|Unix time|1893456000'],'<t:{{u}}:F> (<t:{{u}}:R>)');
+const PCAT={ann:['Announcements','#8b5cf6','#4c1d95'],com:['Community','#ec4899','#9d174d'],gam:['Gaming','#22c55e','#14532d'],dev:['Developer','#3b82f6','#1e3a8a'],mod:['Moderation','#ef4444','#7f1d1d'],evt:['Events','#f59e0b','#78350f'],pro:['Promo','#06b6d4','#164e63'],soc:['Social','#a855f7','#581c87'],fun:['Fun','#eab308','#713f12'],utl:['Utility','#64748b','#1e293b']};
+const TCAT=[['Send',['01','02','03','04','05','14','19','26'],'#8b5cf6','#4c1d95'],['Manage',['07','08','09','13','27','29'],'#3b82f6','#1e3a8a'],['Settings',['06','10','11','23'],'#06b6d4','#164e63'],['Webhooks',['15','16','17','25'],'#22c55e','#14532d'],['Library',['12','18','20','21','22','24','28'],'#f59e0b','#78350f'],['System',['00'],'#ef4444','#7f1d1d']];
+const BADKEY=['__proto__','constructor','prototype'];
+const has=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
+const sub=(s,v)=>String(s==null?'':s).replace(/\{\{(\w+)\}\}/g,(m,k)=>has(v,k)?v[k]:'');
+const isUrl=u=>/^https?:\/\/\S+$/i.test(u);
+const findPl=id=>PLG.find(t=>t.id===id)||S.cust.find(t=>t.id===id);
+const isMine=id=>S.myp.includes(id)||S.cust.some(x=>x.id===id);
+const initials=p=>p.icon||p.name.split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+const sampleVals=pl=>{const o=Object.create(null);pl.fields.forEach(f=>{o[f.k]=f.def||f.ph||''});return o};
+
+function plEmbed(e,v){
+  const o={},g=k=>sub(e[k],v).trim();
+  const t=g('title');if(t)o.title=t.slice(0,256);
+  const d=g('description');if(d)o.description=d.slice(0,4096);
+  const u=g('url');if(isUrl(u))o.url=u;
+  const c=intColor(g('color'));if(c!==undefined)o.color=c;
+  const f=g('footer');if(f)o.footer={text:f.slice(0,2048)};
+  const a=g('author');if(a)o.author={name:a.slice(0,256)};
+  const th=g('thumb');if(isUrl(th))o.thumbnail={url:th};
+  const im=g('image');if(isUrl(im))o.image={url:im};
+  if(e.timestamp)o.timestamp=new Date().toISOString();
+  const fl=(e.fields||[]).map(x=>({name:sub(x[0],v).trim().slice(0,256),value:sub(x[1],v).trim().slice(0,1024),inline:!!x[2]})).filter(x=>x.name&&x.value).slice(0,25);
+  if(fl.length)o.fields=fl;
+  return Object.keys(o).length?o:null}
+function plPayload(pl,v){
+  const content=sub(pl.content,v).trim().slice(0,2000);
+  const em=pl.embed?plEmbed(pl.embed,v):null;
+  const p=base();
+  if(content)p.content=content;
+  if(em)p.embeds=[em];
+  return p}
+
+function cleanDef(o){
+  if(!o||typeof o!=='object'||Array.isArray(o))return null;
+  const s=(x,n)=>typeof x==='string'?x.slice(0,n):'';
+  const name=s(o.name,40).trim();
+  if(!name)return null;
+  const d={id:/^[\w-]{1,40}$/.test(o.id||'')?o.id:'',name,cat:has(PCAT,o.cat)?o.cat:'utl',desc:s(o.desc,120),icon:s(o.icon,2),content:s(o.content,2000),fields:[],embed:null,custom:true};
+  const seen=new Set();
+  (Array.isArray(o.fields)?o.fields:[]).slice(0,10).forEach(f=>{
+    if(!f||typeof f!=='object')return;
+    const k=s(f.k,16);
+    if(!/^\w{1,16}$/.test(k)||BADKEY.includes(k)||seen.has(k))return;
+    seen.add(k);
+    d.fields.push({k,label:s(f.label,40)||k,ph:s(f.ph,100),type:['text','area','color'].includes(f.type)?f.type:'text',def:s(f.def,200)})});
+  if(o.embed&&typeof o.embed==='object'){
+    const e=o.embed,x={};
+    ['title','description','color','url','footer','author','thumb','image'].forEach(k=>{x[k]=s(e[k],k==='description'?4096:500)});
+    x.timestamp=!!e.timestamp;
+    x.fields=(Array.isArray(e.fields)?e.fields:[]).slice(0,25).map(r=>Array.isArray(r)?[s(r[0],256),s(r[1],1024),r[2]?1:0]:null).filter(r=>r&&r[0]&&r[1]);
+    d.embed=x}
+  if(!d.content&&!d.embed)return null;
+  return d}
+const newId=()=>'c_'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+const exportDef=d=>{const o={name:d.name,cat:d.cat,desc:d.desc,icon:d.icon,fields:d.fields,content:d.content};if(d.embed)o.embed=d.embed;return o};
+function importDefs(text){
+  let j;
+  try{j=JSON.parse(text)}catch(e){return{n:0,err:'That is not valid JSON.'}}
+  const list=Array.isArray(j)?j:Array.isArray(j&&j.plugins)?j.plugins:[j];
+  let n=0;
+  for(const x of list.slice(0,50)){
+    if(S.cust.length>=100)break;
+    const d=cleanDef(x);
+    if(!d)continue;
+    d.id=newId();S.cust.push(d);n++}
+  if(n)save();
+  return{n,err:n?'':'No valid plugin found in that data.'}}
+function download(name,text){
+  try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:'application/json'}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}catch(e){}}
+
+function plPanel(pl){
+  const vals=()=>{const o=Object.create(null);pl.fields.forEach(f=>{const e=$('#pf_'+f.k);o[f.k]=e?e.value:''});return o};
+  return{n:pl.name,
+    h:()=>`<p class="hint">${esc(pl.desc)}</p>`+pl.fields.map(f=>f.type==='area'?T(esc(f.label),'pf_'+f.k,f.ph,f.def||f.ph,70):f.type==='color'?F(esc(f.label),'pf_'+f.k,'','color',f.def||'#8b5cf6'):F(esc(f.label),'pf_'+f.k,f.ph,'text',f.def||f.ph)).join('')+PV+B('SEND','pgo','g')+B('COPY JSON','pcp','o')+(pl.custom?B('EDIT','ped','o'):B(isMine(pl.id)?'REMOVE FROM MY PLUGINS':'+ ADD TO MY PLUGINS','pad','o')),
+    pv:()=>({p:plPayload(pl,vals())}),
+    i(){
+      on('pgo',()=>{const p=plPayload(pl,vals());if(!p.content&&!p.embeds){log('Nothing to send. Fill in at least one field.','err');return}sendLog(p,{},pl.name+' sent')});
+      on('pcp',async()=>{const ok=await copyText(JSON.stringify(deepVars(plPayload(pl,vals())),null,2));toast(ok?'JSON copied':'Copy failed')});
+      on('ped',()=>openDyn('mk',makerPanel(pl)));
+      on('pad',()=>{toggleMine(pl.id);$('#pad').textContent=isMine(pl.id)?'REMOVE FROM MY PLUGINS':'+ ADD TO MY PLUGINS'})}}}
+
+function toggleMine(id){
+  const i=S.myp.indexOf(id);
+  if(i<0){S.myp.push(id);toast('Added to My Plugins')}else{S.myp.splice(i,1);toast('Removed from My Plugins')}
+  save()}
+function openDyn(k,p){P[k]=p;openPanel(k)}
+const openPlugin=id=>{const pl=findPl(id);if(pl)openDyn('p_'+id,plPanel(pl))};
+
+const parseFieldLines=t=>t.split('\n').map(l=>l.trim()).filter(Boolean).slice(0,10).map(l=>{const a=l.split('|').map(x=>x.trim());return{k:(a[0]||'').replace(/[^\w]/g,'').slice(0,16),label:a[1]||'',ph:a[2]||'',type:a[3]||'text',def:a[4]||''}});
+const parseEmbedFields=t=>t.split('\n').map(l=>l.trim()).filter(Boolean).slice(0,25).map(l=>{const a=l.split('|');return[(a[0]||'').trim(),(a[1]||'').trim(),(a[2]||'').trim()==='1'?1:0]});
+const fieldLines=a=>(a||[]).map(f=>[f.k,f.label,f.ph,f.type,f.def].join('|')).join('\n');
+const embedLines=a=>(a||[]).map(f=>f[0]+'|'+f[1]+'|'+(f[2]?1:0)).join('\n');
+
+function makerPanel(ed){
+  const d=ed||{name:'',cat:'utl',desc:'',icon:'',fields:[],content:'',embed:null};
+  const e=d.embed||{};
+  const read=()=>({id:d.id||'',name:v('mk_n')||'Plugin',cat:$('#mk_c').value,desc:v('mk_d'),icon:v('mk_i'),fields:parseFieldLines($('#mk_f').value),content:$('#mk_m').value,
+    embed:$('#mk_e').checked?{title:v('mk_et'),description:$('#mk_ed').value,color:v('mk_ec'),footer:v('mk_eo'),author:v('mk_ea'),url:v('mk_eu'),thumb:v('mk_eh'),image:v('mk_ei'),timestamp:$('#mk_ets').checked,fields:parseEmbedFields($('#mk_ef').value)}:null});
+  const cats=Object.keys(PCAT).map(k=>`<option value="${k}"${k===d.cat?' selected':''}>${PCAT[k][0]}</option>`).join('');
+  return{n:ed?'Edit Plugin':'New Plugin',
+    h:()=>`<p class="hint">Build your own tool. Wrap an input key in double curly braces anywhere in the message or embed to insert what the user types, for example {{name}}.</p>`
+      +F('Name','mk_n','My plugin','text',d.name)+`<label>Category</label><select id="mk_c">${cats}</select>`
+      +F('Short description','mk_d','What it does','text',d.desc)+F('Icon (1 or 2 characters)','mk_i','','text',d.icon)
+      +T('Inputs: one per line as key|Label|Placeholder|text, area or color|Default','mk_f','title|Title|Hello|text|',fieldLines(d.fields),90)
+      +T('Message text','mk_m','Hello {{title}}',d.content,70)
+      +C('Include an embed','mk_e',!!d.embed)
+      +'<div id="mk_eb">'+F('Embed title','mk_et','','text',e.title||'')+T('Embed description','mk_ed','',e.description||'',70)+F('Color','mk_ec','#8b5cf6','text',e.color||'#8b5cf6')
+      +F('Footer','mk_eo','','text',e.footer||'')+F('Author','mk_ea','','text',e.author||'')+F('Title link URL','mk_eu','https://','text',e.url||'')+F('Thumbnail URL','mk_eh','https://','text',e.thumb||'')+F('Image URL','mk_ei','https://','text',e.image||'')
+      +C('Add timestamp','mk_ets',!!e.timestamp)+T('Embed fields: Name|Value|1 for inline, one per line','mk_ef','Status|{{title}}|1',embedLines(e.fields),70)+'</div>'
+      +PV+B('SAVE','mk_s','g')+B('EXPORT','mk_x','o')+(ed&&ed.id?B('DELETE','mk_d_','r'):''),
+    pv(){
+      $('#mk_eb').style.display=$('#mk_e').checked?'block':'none';
+      const x=cleanDef(read());
+      if(!x)return{p:{content:'Add message text or an embed to see a preview.'}};
+      return{p:plPayload(x,sampleVals(x))}},
+    i(){
+      on('mk_s',()=>{
+        const x=cleanDef(read());
+        if(!x||!$('#mk_n').value.trim()){log('Give the plugin a name and a message or embed.','err');return}
+        if(d.id){x.id=d.id;const i=S.cust.findIndex(c=>c.id===d.id);if(i>=0)S.cust[i]=x;else S.cust.push(x)}
+        else{if(S.cust.length>=100){log('Limit of 100 custom plugins reached.','err');return}x.id=newId();S.cust.push(x)}
+        save();log('Plugin saved: '+x.name,'ok');toast('Plugin saved');closePanel();setView('mine')});
+      on('mk_x',async()=>{
+        const x=cleanDef(read());
+        if(!x){log('Nothing to export yet.','err');return}
+        const t=JSON.stringify(exportDef(x),null,2);
+        download(slug(x.name)+'.json',t);
+        const ok=await copyText(t);toast(ok?'Plugin JSON copied':'Plugin file saved')});
+      on('mk_d_',()=>{if(!confirm('Delete this plugin?'))return;S.cust=S.cust.filter(c=>c.id!==d.id);save();closePanel();setView('mine')})}}}
+
+const importPanel={n:'Import Plugins',
+  h:()=>`<p class="hint">Paste plugin JSON, pick a .json file, or load one from a link. One plugin, a list, or an object with a plugins list all work.</p>`
+    +T('Plugin JSON','imp_t','{"name":"Hello","content":"Hi"}','',140)+B('IMPORT','imp_go','g')
+    +F('Load from link','imp_u','https://example.com/plugin.json','url')+B('FETCH','imp_fetch','o')
+    +'<label>Or choose a file</label><input id="imp_f" type="file" accept=".json,application/json">',
+  i(){
+    const done=r=>{if(r.n){log('Imported '+r.n+' plugin'+(r.n>1?'s':''),'ok');toast('Imported '+r.n);closePanel();setView('mine')}else log(r.err,'err')};
+    on('imp_go',()=>done(importDefs($('#imp_t').value)));
+    on('imp_fetch',async()=>{
+      const u=v('imp_u');
+      if(!isUrl(u)){log('Enter a valid link.','err');return}
+      try{const r=await fetch(u);if(!r.ok)throw 0;done(importDefs(await r.text()))}catch(e){log('Could not load that link. The host may block requests from other sites; paste the JSON instead.','err')}});
+    $('#imp_f').onchange=async e=>{const f=e.target.files[0];if(f)done(importDefs(await f.text()))}}};
+
+let VIEW='tools',QRY='';
+const OPENC=new Set(['ann']);
+const ICON={tools:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',store:'<path d="M4 7h16l-1.5 12h-13z"/><path d="M9 7a3 3 0 0 1 6 0"/>',mine:'<path d="M12 3l2.7 5.5 6 .9-4.3 4.2 1 6-5.4-2.8-5.4 2.8 1-6L3.3 9.4l6-.9z"/>',make:'<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>'};
+const VNAME={tools:'Tools',store:'Store',mine:'Mine',make:'Build'};
+$('#rail').innerHTML=Object.keys(ICON).map(k=>`<button class="rb" data-v="${k}"><svg viewBox="0 0 24 24">${ICON[k]}</svg>${VNAME[k]}</button>`).join('');
+
+const pcard=(key,ic,name,desc,g1,g2,add)=>`<div class="kc" data-k="${key}" style="--g1:${g1};--g2:${g2}"><div class="ki">${esc(ic)}</div><div class="kn">${esc(name)}</div><div class="kd">${esc(desc)}</div>${add===undefined?'':`<button class="kp${add?' in':''}" data-add="${key.slice(2)}">${add?'✓':'+'}</button>`}</div>`;
+const acc=(id,title,g1,g2,n,body,force)=>{const o=force||OPENC.has(id);return`<button class="ah${o?' open':''}" data-acc="${id}"><span class="ad" style="--g1:${g1};--g2:${g2}"></span>${esc(title)}<em>${n}</em><i></i></button><div class="ab${o?' open':''}">${body}</div>`};
+const match=(q,...s)=>!q||s.some(x=>String(x).toLowerCase().includes(q));
+
+function listHtml(){
+  const q=QRY.trim().toLowerCase();let h='';
+  if(VIEW==='tools'){
+    TCAT.forEach(([t,ks,g1,g2])=>{
+      const l=ks.filter(k=>P[k]&&match(q,P[k].n,t));
+      if(l.length)h+=acc('t'+t,t,g1,g2,l.length,l.map(k=>pcard('T:'+k,k,P[k].n,t,g1,g2)).join(''),!!q)})}
+  else if(VIEW==='store'){
+    Object.keys(PCAT).forEach(c=>{
+      const [t,g1,g2]=PCAT[c];
+      const l=PLG.filter(p=>p.cat===c&&match(q,p.name,p.desc,t));
+      if(l.length)h+=acc(c,t,g1,g2,l.length,l.map(p=>pcard('P:'+p.id,initials(p),p.name,p.desc,g1,g2,isMine(p.id))).join(''),!!q)})}
+  else if(VIEW==='mine'){
+    const l=[...PLG.filter(p=>S.myp.includes(p.id)),...S.cust].filter(p=>match(q,p.name,p.desc));
+    if(!l.length)h=`<p class="hint">${q?'No plugins match.':'Nothing here yet. Add plugins from the Store with the + button, or build your own.'}</p>`;
+    else{
+      const g={};l.forEach(p=>(g[p.cat]=g[p.cat]||[]).push(p));
+      Object.keys(g).forEach(c=>{const [t,g1,g2]=PCAT[c];h+=acc('m'+c,t,g1,g2,g[c].length,g[c].map(p=>pcard('P:'+p.id,initials(p),p.name,p.custom?'Custom plugin':p.desc,g1,g2,p.custom?undefined:true)).join(''),true)})}}
+  else{
+    h=`<div class="ab open"><div class="kc" data-act="new" style="--g1:#8b5cf6;--g2:#4c1d95"><div class="ki">+</div><div class="kn">New Plugin</div><div class="kd">Design a tool with inputs and a live preview</div></div><div class="kc" data-act="imp" style="--g1:#06b6d4;--g2:#164e63"><div class="ki">↓</div><div class="kn">Import</div><div class="kd">From JSON, a file or a link</div></div><div class="kc" data-act="exp" style="--g1:#22c55e;--g2:#14532d"><div class="ki">↑</div><div class="kn">Export All</div><div class="kd">Save your custom plugins as JSON</div></div></div>`;
+    const c=S.cust.filter(p=>match(q,p.name,p.desc));
+    h+=acc('mycust','My Custom Plugins','#f59e0b','#78350f',c.length,c.length?c.map(p=>pcard('E:'+p.id,initials(p),p.name,PCAT[p.cat][0],PCAT[p.cat][1],PCAT[p.cat][2])).join(''):'<p class="hint" style="grid-column:1/3">No custom plugins yet.</p>',true)}
+  return h||'<p class="hint">Nothing matches.</p>'}
+
+function renderView(){
+  const v=$('#views');
+  const sub1={tools:'Built-in tools',store:'Plugin Store · '+PLG.length+' templates',mine:'My Plugins · '+(S.myp.length+S.cust.length),make:'Plugin Builder'}[VIEW];
+  v.innerHTML=`<div class="vh">${sub1}</div><input id="q" class="srch" type="search" placeholder="Search" value="${esc(QRY)}" autocomplete="off"><div id="vlist">${listHtml()}</div>`;
+  $('#q').oninput=e=>{QRY=e.target.value;$('#vlist').innerHTML=listHtml()};
+  document.querySelectorAll('.rb').forEach(b=>b.classList.toggle('on',b.dataset.v===VIEW))}
+function setView(x){
+  if(cur)closePanel();
+  if(x!==VIEW)QRY='';
+  VIEW=x;renderView();$('#main').scrollTop=0}
+$('#rail').addEventListener('click',e=>{const b=e.target.closest('.rb');if(b)setView(b.dataset.v)});
+$('#views').addEventListener('click',e=>{
+  const a=e.target.closest('[data-add]');
+  if(a){e.stopPropagation();toggleMine(a.dataset.add);$('#vlist').innerHTML=listHtml();return}
+  const h=e.target.closest('.ah');
+  if(h){const id=h.dataset.acc;if(OPENC.has(id))OPENC.delete(id);else OPENC.add(id);const open=OPENC.has(id)||!!QRY.trim()||(VIEW==='mine'||VIEW==='make');h.classList.toggle('open',open);h.nextElementSibling.classList.toggle('open',open);if(VIEW==='mine'||VIEW==='make')$('#vlist').innerHTML=listHtml();return}
+  const c=e.target.closest('.kc');
+  if(!c)return;
+  if(c.dataset.act){
+    const t=c.dataset.act;
+    if(t==='new')openDyn('mk',makerPanel(null));
+    else if(t==='imp')openDyn('imp',importPanel);
+    else{if(!S.cust.length){log('No custom plugins to export.','err');return}const s=JSON.stringify({plugins:S.cust.map(exportDef)},null,2);download('randomcord-plugins.json',s);copyText(s);toast('Plugins exported')}
+    return}
+  const [t,id]=[c.dataset.k.slice(0,1),c.dataset.k.slice(2)];
+  if(t==='T')openPanel(id);
+  else if(t==='P')openPlugin(id);
+  else if(t==='E'){const d=S.cust.find(x=>x.id===id);if(d)openDyn('mk',makerPanel(d))}});
+
+const DRAFT_IDS=['lines','js','dt','uls','pq','po'];
+let cur=null,curK='';
+function updCnt(){
+  document.querySelectorAll('.cnt[data-for]').forEach(c=>{
+    const el=document.getElementById(c.dataset.for);if(!el)return;
+    const n=el.value.length,m=+c.dataset.max;
+    c.textContent=n+' / '+m;c.classList.toggle('over',n>m)})}
+function refresh(){
+  updCnt();
+  if(!cur)return;
+  try{
+    if(cur.pv&&$('#pv')){const r=cur.pv();renderPreview($('#pv'),r.p,r.files||[]);updCnt()}
+    if(cur.live)cur.live()
+  }catch(e){}}
+function openPanel(k){
+  $('#views').style.display='none';
+  const el=$('#panel');el.style.display='block';
+  cur=P[k];curK=k;
+  el.innerHTML=`<button class="back" id="bk">← BACK</button><h2>${/^\d+$/.test(k)?k+'. ':''}${P[k].n}</h2>${P[k].h()}`;
+  $('#bk').onclick=closePanel;
+  cur.i();
+  DRAFT_IDS.forEach(id=>{const e=$('#'+id),sv=S.draft.f[k+':'+id];if(e&&sv&&!e.value)e.value=sv});
+  refresh();
+  $('#main').scrollTop=0}
+function closePanel(){
+  if(cur&&cur.off)cur.off();
+  cur=null;
+  $('#panel').style.display='none';
+  $('#views').style.display=''}
+
+$('#panel').addEventListener('input',e=>{
+  const t=e.target;
+  if(cur&&t.id&&DRAFT_IDS.includes(t.id)){S.draft.f[curK+':'+t.id]=t.value;saveSoon()}
+  refresh()});
+$('#panel').addEventListener('change',refresh);
+$('#msg').addEventListener('input',()=>{S.draft.msg=$('#msg').value;saveSoon();refresh()});
+document.addEventListener('click',e=>{
+  const s=e.target.closest('.pv .sp,.pv .spl');
+  if(s)s.classList.toggle('show')});
+
+$('#url').value=S.current||'';
+if(S.draft.msg)$('#msg').value=S.draft.msg;
+$('#url').addEventListener('input',refreshStatus);
+refreshStatus();updCnt();
+$('#unlock').onclick=()=>{$('#lock').classList.remove('on');closePanel();log('[System Ready] Dashboard reloaded.','ok')};
+
+setInterval(async()=>{
+  const now=Date.now();
+  const due=S.queue.filter(q=>q.at<=now);
+  if(!due.length)return;
+  S.queue=S.queue.filter(q=>q.at>now);save();
+  for(const q of due){const r=await api(q.url,{payload:q.payload});log(r.ok?'Scheduled message delivered.':r.queued?'Scheduled message queued (offline).':'Scheduled message failed.',r.ok?'ok':r.queued?'wrn':'err')}},1000);
+
+async function consumeShare(){
+  try{
+    const c=await caches.open('rc-share');
+    const m=await c.match('./shared-meta');if(!m)return;
+    const meta=await m.json();
+    const parts=[...new Set([meta.title,meta.text,meta.url].filter(Boolean))];
+    if(parts.length){const old=$('#msg').value;$('#msg').value=(old?old+'\n':'')+parts.join('\n');$('#msg').dispatchEvent(new Event('input'))}
+    const files=[];
+    for(const k of meta.files){
+      const r=await c.match(k);
+      if(r){const b=await r.blob();files.push(new File([b],decodeURIComponent(r.headers.get('X-Name')||'file'),{type:b.type}))}}
+    for(const k of await c.keys())await c.delete(k);
+    log('Shared content received.','ok');
+    if(files.length){SHARED_FILES=files;if(cur)closePanel();openPanel('04')}
+  }catch(e){}}
+
+renderView();
+(function(){
+  const qs=new URLSearchParams(location.search);
+  if(qs.get('shared')){consumeShare();history.replaceState(null,'',location.pathname)}
+  else if(['tools','store','mine','make'].includes(qs.get('open'))){setView(qs.get('open'));history.replaceState(null,'',location.pathname)}
+  else if(qs.get('open')&&P[qs.get('open')]){openPanel(qs.get('open'));history.replaceState(null,'',location.pathname)}
+})();
+
+flushOutbox();
+
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
+</script>
+</body>
+</html>
